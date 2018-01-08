@@ -1,0 +1,17 @@
+{
+  "name": "command-line-hello-world",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cavy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "commander": "^2.12.2",
+    "express": "^4.16.2",
+    "figlet": "^1.2.0"
+  }
+}
