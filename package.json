@@ -1,7 +1,10 @@
 {
-  "name": "command-line-hello-world",
-  "version": "1.0.0",
-  "description": "",
+  "name": "cavy-cli",
+  "version": "0.0.1",
+  "description": "A command line interface for Cavy, a React Native integration testing framework",
+  "bin": {
+    "cavy": "./cavy.js"
+  },
   "main": "cavy.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

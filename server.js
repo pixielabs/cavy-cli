@@ -22,8 +22,6 @@ server.post('/report', (req, res) => {
   const errorCount = req.body['errorCount'];
   const duration = req.body['duration'];
 
-  console.log('Results:');
-
   results.forEach((result, index) => {
     message = `${index + 1}) ${result['message']}`;
 
