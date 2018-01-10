@@ -9,8 +9,26 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixielabs/cavy-cli.git"
+  },
+  "keywords": [
+    "react",
+    "react native",
+    "ios",
+    "android",
+    "integration tests",
+    "testing",
+    "test",
+    "specs"
+  ],
+  "author": "Pixie Labs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pixielabs/cavy-cli/issues"
+  },
+  "homepage": "https://github.com/pixielabs/cavy-cli#readme",
   "dependencies": {
     "chalk": "^2.3.0",
     "commander": "^2.12.2",
