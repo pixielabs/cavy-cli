@@ -1,3 +1,7 @@
+# 0.0.2
+
+- Remove `--harmony`.
+
 # 0.0.1
 
 - Initial prototype release. With thanks to
