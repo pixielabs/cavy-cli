@@ -1,4 +1,4 @@
-#!/usr/bin/env node --harmony
+#!/usr/bin/env node
 
 const program = require('commander');
 const { spawn, execFileSync } = require('child_process');
