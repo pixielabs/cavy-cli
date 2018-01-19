@@ -1,6 +1,6 @@
 {
   "name": "cavy-cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A command line interface for Cavy, a React Native integration testing framework",
   "bin": {
     "cavy": "./cavy.js"

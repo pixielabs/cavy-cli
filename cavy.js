@@ -15,7 +15,7 @@ function getAdbPath() {
 let reactNativeCommand;
 
 program.
-  version('0.0.1').
+  version('0.0.3').
   arguments('<run-ios|run-android>', 'react-native command to run').
   action((cmd) => reactNativeCommand = cmd).
   parse(process.argv);

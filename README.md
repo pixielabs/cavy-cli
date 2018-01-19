@@ -15,15 +15,23 @@ command line. When the tests finish the command outputs the results and quits
 with the relevant exit code (0 for success, 1 for failure) which can be used by
 continuous integration scripts to determine if the test suite passed or not.
 
-**cavy-cli** is in an early stage of development. But we are using it to test
+**cavy-cli is in an early stage of development**. But we are using it to test
 Cavy itself! Check out [our sample app Circle CI
 configuration](https://github.com/pixielabs/cavy/blob/add-cavy-cli-support/.circleci/config.yml) 
 for inspiration.
 
 ## Installation
 
+To get started with **cavy-cli**, install it using `npm`:
+
 ```shell
 $ npm install -g cavy-cli
+```
+
+or `yarn`:
+
+```shell
+$ yarn global add cavy-cli
 ```
 
 ## Basic usage
@@ -47,6 +55,10 @@ $ cavy run-android
 - Output the test results in progress, not just when they are all finished.
 - Handle when Cavy never runs; time out if the app doesn't boot after a certain
   amount of time.
+- Get a working example of an Android build in CI. We couldn't get an Android
+  emulator running properly in Circle CI. If you have an example of
+  **cavy-cli** working in CI for Android builds, please get in touch!
+- Pass through arguments to react-native command.
 
 ## Contributing
 
