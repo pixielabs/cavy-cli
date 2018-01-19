@@ -17,7 +17,7 @@ continuous integration scripts to determine if the test suite passed or not.
 
 **cavy-cli is in an early stage of development**. But we are using it to test
 Cavy itself! Check out [our sample app Circle CI
-configuration](https://github.com/pixielabs/cavy/blob/add-cavy-cli-support/.circleci/config.yml) 
+configuration](https://github.com/pixielabs/cavy/blob/master/.circleci/config.yml) 
 for inspiration.
 
 ## Installation
