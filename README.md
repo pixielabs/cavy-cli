@@ -34,6 +34,15 @@ or `yarn`:
 $ yarn global add cavy-cli
 ```
 
+Set the `sendReport` prop to `true` on your Cavy `<Tester>` component in your
+app:
+
+```jsx
+<Tester specs={...} store={...} sendReport={true}>
+...
+</Tester>
+```
+
 ## Basic usage
 
 From within your React Native project, with Cavy already installed and set up
