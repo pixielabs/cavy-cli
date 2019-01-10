@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const { spawn, execFileSync } = require('child_process');
+const { spawn, execFileSync, exec } = require('child_process');
 
 const server = require('./server')
 
@@ -25,30 +25,43 @@ if (reactNativeCommand !== 'run-ios' && reactNativeCommand !== 'run-android') {
   process.exit(1);
 }
 
-console.log(`cavy: running \`react-native ${reactNativeCommand}\`...`);
-let rn = spawn('react-native', [reactNativeCommand], {stdio: 'inherit'});
-rn.on('close', (code) => {
-  console.log(`cavy: react-native exited with code ${code}.`);
-  if (code) {
-    return process.exit(code);
-  }
+const fileFoundMsg = 'Found an index.test.js, copying over to index.js...';
+const noFileFoundMsg = 'No index.test.js file found, skipping set up.'
 
-  // Start test server, listening for test results to be posted
-  const app = server.listen(8082, () => {
-    if (reactNativeCommand == 'run-android') {
-      try {
-        // Runs ADB reverse tcp:8082 tcp:8082 to allow reporting of test results
-        // from React Native. Borrowed from react-native-cli.
-        const adbPath = getAdbPath();
-        const adbArgs = ['reverse', 'tcp:8082', 'tcp:8082'];
-        console.log(`cavy: Running ${adbPath} ${adbArgs.join(' ')}`);
-        execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
-      } catch(e) {
-        console.error(`Could not run adb reverse: ${e.message}`);
-        process.exit(1);
-      }
+let fileFound;
+const check = exec(`test -e ./index.test.js && echo ${fileFoundMsg} || ${noFileFoundMsg}`, (error, stdout, stderr) => {
+  console.log(`cavy: ${stdout}`);
+  fileFound = stdout.trim() == fileFoundMsg;
+});
+
+check.on('close', () => {
+  console.log(`cavy: running \`react-native ${reactNativeCommand}\`...`);
+  let rn = spawn('react-native', [reactNativeCommand], {stdio: 'inherit'});
+
+  rn.on('close', (code) => {
+    console.log(`cavy: react-native exited with code ${code}.`);
+    if (code) {
+      return process.exit(code);
     }
-      
-    console.log(`cavy: listening on port 8082 for test results...`);
+
+    // Start test server, listening for test results to be posted
+    const app = server.listen(8082, () => {
+      if (reactNativeCommand == 'run-android') {
+        try {
+          // Runs ADB reverse tcp:8082 tcp:8082 to allow reporting of test results
+          // from React Native. Borrowed from react-native-cli.
+          const adbPath = getAdbPath();
+          const adbArgs = ['reverse', 'tcp:8082', 'tcp:8082'];
+          console.log(`cavy: Running ${adbPath} ${adbArgs.join(' ')}`);
+          execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
+        } catch(e) {
+          console.error(`Could not run adb reverse: ${e.message}`);
+          process.exit(1);
+        }
+      }
+
+      console.log(`cavy: listening on port 8082 for test results...`);
+    });
   });
+
 });
