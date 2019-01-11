@@ -18,6 +18,7 @@ function getAdbPath() {
 }
 
 let reactNativeCommand;
+let testEntryPoint;
 
 program.
   version('0.0.3').
@@ -33,18 +34,25 @@ if (reactNativeCommand !== 'run-ios' && reactNativeCommand !== 'run-android') {
 
 // Check whether the app has an index.test.js file...
 const check = exec(`test -e ./index.test.js`);
-
 // ... and if it does, use it to build the app - this is where Cavy config
 // should be.
 check.on('close', (code) => {
   if (code == 0) {
     // Set an env var so that the test server knows whether to teardown this
     // test setup process.
-    process.env.TEST_ENTRY_POINT_PRESENT = 'true';
+    testEntryPoint = true;
     const setUp = exec(`mv index.js index.temp.js && mv index.test.js index.js`);
     setUp.on('close', () => buildApp());
   } else {
     buildApp();
+  }
+});
+
+// If we intially swapped out the index.js file for the test file, swap it back
+// before exiting the process.
+process.on('exit', () => {
+  if (testEntryPoint) {
+    exec(`mv index.js index.test.js && mv index.temp.js index.js`);
   }
 });
 
