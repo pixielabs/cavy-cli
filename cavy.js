@@ -40,19 +40,13 @@ check.on('close', (code) => {
   if (code == 0) {
     // Set an env var so that the test server knows whether to teardown this
     // test setup process.
-    testEntryPoint = true;
     const setUp = exec(`mv index.js index.temp.js && mv index.test.js index.js`);
-    setUp.on('close', () => buildApp());
+    setUp.on('close', () => {
+      testEntryPoint = true;
+      buildApp();
+    });
   } else {
     buildApp();
-  }
-});
-
-// If we intially swapped out the index.js file for the test file, swap it back
-// before exiting the process.
-process.on('exit', () => {
-  if (testEntryPoint) {
-    exec(`mv index.js index.test.js && mv index.temp.js index.js`);
   }
 });
 
@@ -86,4 +80,21 @@ function buildApp() {
       console.log(`cavy: listening on port 8082 for test results...`);
     });
   });
+}
+
+// If we intially swapped out the index.js file for the test file, swap it back
+// before exiting the process.
+process.on('exit', () => {
+  teardown();
+});
+
+process.on('SIGINT', () => {
+  teardown();
+  process.exit(1);
+});
+
+function teardown() {
+  if (testEntryPoint) {
+    exec(`mv index.js index.test.js && mv index.temp.js index.js`);
+  }
 }
