@@ -1,6 +1,7 @@
 const express = require('express');
 const server = express();
 const chalk = require('chalk');
+const { exec } = require('child_process');
 
 server.use(express.json());
 
@@ -13,11 +14,17 @@ function countString(count, str) {
   return `${count} ${string}`;
 };
 
+// If we intially swapped out the index.js file for the test file, swap it back.
+function cleanUpTestFiles() {
+  if (process.env.TEST_ENTRY_POINT_PRESENT == 'true') {
+    exec(`mv index.js index.test.js && mv index.temp.js index.js`);
+  }
+}
+
 // Public: POST route which accepts json report object, console logs the results
 // and quits the process with either exit code 1 or 0 depending on whether any
 // tests failed.
 server.post('/report', (req, res) => {
-
   const results = req.body['results'];
   const errorCount = req.body['errorCount'];
   const duration = req.body['duration'];
@@ -40,14 +47,15 @@ server.post('/report', (req, res) => {
   // If all tests pass, exit with code 0, else code 1
   if (!errorCount) {
     console.log(chalk.green(endMsg));
+    cleanUpTestFiles();
     res.send('ok');
     process.exit(0);
   } else {
     console.log(chalk.red(endMsg));
+    cleanUpTestFiles();
     res.send('failed');
     process.exit(1);
   }
-
 });
 
 module.exports = server;

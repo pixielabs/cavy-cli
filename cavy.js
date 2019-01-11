@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const program = require('commander');
 const { spawn, execFileSync, exec } = require('child_process');
 
@@ -20,35 +19,46 @@ program.
   action((cmd) => reactNativeCommand = cmd).
   parse(process.argv);
 
+// Check that the user has entered a valid argument
 if (reactNativeCommand !== 'run-ios' && reactNativeCommand !== 'run-android') {
   program.outputHelp();
   process.exit(1);
 }
 
-const fileFoundMsg = 'Found an index.test.js, copying over to index.js...';
-const noFileFoundMsg = 'No index.test.js file found, skipping set up.'
+// Check whether the app has an index.test.js file...
+const check = exec(`test -e ./index.test.js`);
 
-let fileFound;
-const check = exec(`test -e ./index.test.js && echo ${fileFoundMsg} || ${noFileFoundMsg}`, (error, stdout, stderr) => {
-  console.log(`cavy: ${stdout}`);
-  fileFound = stdout.trim() == fileFoundMsg;
+// ... and if it does, use it to build the app - this is where Cavy config
+// should be.
+check.on('close', (code) => {
+  if (code == 0) {
+    // Set an env var so that the test server knows whether to teardown this
+    // test setup process.
+    process.env.TEST_ENTRY_POINT_PRESENT = 'true';
+    const setUp = exec(`mv index.js index.temp.js && mv index.test.js index.js`);
+    setUp.on('close', () => buildApp());
+  } else {
+    buildApp();
+  }
 });
 
-check.on('close', () => {
+// Build the app, start the test server and wait for results.
+function buildApp() {
   console.log(`cavy: running \`react-native ${reactNativeCommand}\`...`);
-  let rn = spawn('react-native', [reactNativeCommand], {stdio: 'inherit'});
 
+  let rn = spawn('react-native', [reactNativeCommand], {stdio: 'inherit'});
+  // Wait for the app to build first...
   rn.on('close', (code) => {
     console.log(`cavy: react-native exited with code ${code}.`);
+    // ... quit if something went wrong.
     if (code) {
       return process.exit(code);
     }
-
-    // Start test server, listening for test results to be posted
+    // ... start test server, listening for test results to be posted.
     const app = server.listen(8082, () => {
       if (reactNativeCommand == 'run-android') {
         try {
-          // Runs ADB reverse tcp:8082 tcp:8082 to allow reporting of test results
+          // Run ADB reverse tcp:8082 tcp:8082 to allow reporting of test results
           // from React Native. Borrowed from react-native-cli.
           const adbPath = getAdbPath();
           const adbArgs = ['reverse', 'tcp:8082', 'tcp:8082'];
@@ -59,9 +69,7 @@ check.on('close', () => {
           process.exit(1);
         }
       }
-
       console.log(`cavy: listening on port 8082 for test results...`);
     });
   });
-
-});
+}
