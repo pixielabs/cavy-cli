@@ -4,6 +4,12 @@ const { spawn, execFileSync, exec } = require('child_process');
 
 const server = require('./server')
 
+function getCommandParams(command, args) {
+  const commandIndex = args.indexOf(command);
+
+  return args.slice(commandIndex, args.length)
+}
+
 // Borrowed from react-native-cli
 function getAdbPath() {
   return process.env.ANDROID_HOME
@@ -14,7 +20,7 @@ function getAdbPath() {
 let reactNativeCommand;
 
 program.
-  version('0.0.1').
+  version('0.0.3').
   arguments('<run-ios|run-android>', 'react-native command to run').
   action((cmd) => reactNativeCommand = cmd).
   parse(process.argv);
@@ -46,7 +52,7 @@ check.on('close', (code) => {
 function buildApp() {
   console.log(`cavy: running \`react-native ${reactNativeCommand}\`...`);
 
-  let rn = spawn('react-native', [reactNativeCommand], {stdio: 'inherit'});
+  let rn = spawn('react-native', [reactNativeCommand, ...getCommandParams(reactNativeCommand, process.argv)], {stdio: 'inherit'});
   // Wait for the app to build first...
   rn.on('close', (code) => {
     console.log(`cavy: react-native exited with code ${code}.`);

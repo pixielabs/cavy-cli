@@ -1,3 +1,7 @@
+# 0.0.3
+
+- README update, fix reported version number.
+
 # 0.0.2
 
 - Remove `--harmony`.
