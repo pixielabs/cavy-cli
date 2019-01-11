@@ -82,17 +82,19 @@ function buildApp() {
   });
 }
 
-// If we intially swapped out the index.js file for the test file, swap it back
-// before exiting the process.
+// Handle reverting any file changes made before exiting the process.
 process.on('exit', () => {
   teardown();
 });
 
+// If the user interrupts the process (ctrl-c), revert any file changes before
+// exiting.
 process.on('SIGINT', () => {
   teardown();
   process.exit(1);
 });
 
+// If file changes have been made, revert them.
 function teardown() {
   if (testEntryPoint) {
     exec(`mv index.js index.test.js && mv index.temp.js index.js`);
