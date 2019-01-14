@@ -38,8 +38,6 @@ const check = exec(`test -e ./index.test.js`);
 // should be.
 check.on('close', (code) => {
   if (code == 0) {
-    // Set an env var so that the test server knows whether to teardown this
-    // test setup process.
     const setUp = exec(`mv index.js index.temp.js && mv index.test.js index.js`);
     setUp.on('close', () => {
       testEntryPoint = true;
