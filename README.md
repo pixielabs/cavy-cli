@@ -55,6 +55,10 @@ $ cavy run-ios
 $ cavy run-android
 ```
 
+**cavy-cli** will use an `index.test.js` entry point if you have one in your
+React Native project. This allows you to set up your tests to only run
+when your app is built by **cavy-cli**.
+ 
 ## TODO
 
 - Make this the default way of running Cavy; only run tests if **cavy-cli** is
@@ -72,6 +76,12 @@ $ cavy run-android
 ## Contributing
 
 Before contributing, please read the [code of conduct](CODE_OF_CONDUCT.md).
+
+You can test your local version of cavy-cli by running `npm link` within the
+`cavy-cli` folder. This will make it so `cavy` is pointing to the `cavy.js`
+script in your local copy of `cavy-cli`. See
+[the documentation for npm link](https://docs.npmjs.com/cli/link) for more
+information.
 
 - Check out the latest master to make sure the feature hasn't been implemented
   or the bug hasn't been fixed yet.
