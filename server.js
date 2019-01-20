@@ -17,7 +17,6 @@ function countString(count, str) {
 // and quits the process with either exit code 1 or 0 depending on whether any
 // tests failed.
 server.post('/report', (req, res) => {
-
   const results = req.body['results'];
   const errorCount = req.body['errorCount'];
   const duration = req.body['duration'];
@@ -47,7 +46,6 @@ server.post('/report', (req, res) => {
     res.send('failed');
     process.exit(1);
   }
-
 });
 
 module.exports = server;
