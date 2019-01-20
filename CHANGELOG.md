@@ -1,3 +1,7 @@
+# 1.0.0
+
+- Use an index.test.js entry file if it's available.
+
 # 0.0.3
 
 - README update, fix reported version number.
