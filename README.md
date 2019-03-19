@@ -58,7 +58,40 @@ $ cavy run-android
 **cavy-cli** will use an `index.test.js` entry point if you have one in your
 React Native project. This allows you to set up your tests to only run
 when your app is built by **cavy-cli**.
- 
+
+For example:
+
+```js
+// index.js
+import { AppRegistry } from 'react-native';
+import App from './App';
+
+AppRegistry.registerComponent('AppName', () => App);
+```
+
+```js
+// index.test.js
+import React, { Component } from 'react';
+import { AppRegistry } from 'react-native';
+import { Tester, TestHookStore } from 'cavy';
+import App from './App';
+import AppSpec from './specs/AppSpec';
+
+const testHookStore = new TestHookStore();
+
+class AppWrapper extends Component {
+  render() {
+    return (
+      <Tester specs={[AppSpec]} store={testHookStore} sendReport={true}>
+        <App />
+      </Tester>
+    );
+  }
+}
+
+AppRegistry.registerComponent('AppName', () => AppWrapper);
+```
+
 ## TODO
 
 - Make this the default way of running Cavy; only run tests if **cavy-cli** is
