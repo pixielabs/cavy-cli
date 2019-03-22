@@ -2,24 +2,16 @@ const server = require('../server');
 const { existsSync } = require('fs');
 const { spawn, execFileSync, execSync } = require('child_process');
 
-function getCommandParams(command, args) {
-  const commandIndex = args.indexOf(command);
-
-  return args.slice(commandIndex, args.length)
-}
-
 // If file changes have been made, revert them.
-function teardown() {
-  if (testEntryPoint) {
-    console.log('cavy: putting your index.js back');
-    const cmd = 'mv index.js index.test.js && mv index.notest.js index.js';
-    console.log(`cavy: running \`${cmd}\`...`);
-    execSync(cmd);
-  }
+function _teardown() {
+  console.log('cavy: putting your index.js back');
+  const cmd = 'mv index.js index.test.js && mv index.notest.js index.js';
+  console.log(`cavy: running \`${cmd}\`...`);
+  execSync(cmd);
 }
 
 // Borrowed from react-native-cli
-function getAdbPath() {
+function _getAdbPath() {
   return process.env.ANDROID_HOME
     ? process.env.ANDROID_HOME + '/platform-tools/adb'
     : 'adb';
@@ -27,7 +19,7 @@ function getAdbPath() {
 
 // This is called if the user types `cavy run-ios` or `cavy run-android`. The
 // command argument is one of `run-ios` or `run-android`.
-function runTests(process, command) {
+function runTests(command, args) {
   let testEntryPoint = false;
   // Check whether the app has an index.test.js file...
   if (existsSync('index.test.js')) {
@@ -45,7 +37,9 @@ function runTests(process, command) {
 
   // Handle reverting any file changes made before exiting the process.
   process.on('exit', () => {
-    teardown();
+    if (testEntryPoint) {
+      _teardown()
+    };
   });
 
   // If the user interrupts the process (ctrl-c), revert any file changes before
@@ -58,7 +52,8 @@ function runTests(process, command) {
   // Build the app, start the test server and wait for results.
   console.log(`cavy: running \`react-native ${command}\`...`);
 
-  let rn = spawn('react-native', [command, ...getCommandParams(command, process.argv)], {stdio: 'inherit'});
+  let rn = spawn('react-native', [command, ...args], { stdio: 'inherit' });
+
   // Wait for the app to build first...
   rn.on('close', (code) => {
     console.log(`cavy: react-native exited with code ${code}.`);
@@ -72,7 +67,7 @@ function runTests(process, command) {
         try {
           // Run ADB reverse tcp:8082 tcp:8082 to allow reporting of test results
           // from React Native. Borrowed from react-native-cli.
-          const adbPath = getAdbPath();
+          const adbPath = _getAdbPath();
           const adbArgs = ['reverse', 'tcp:8082', 'tcp:8082'];
           console.log(`cavy: Running ${adbPath} ${adbArgs.join(' ')}`);
           execFileSync(adbPath, adbArgs, {stdio: 'inherit'});

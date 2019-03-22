@@ -20,8 +20,16 @@ if (!['run-ios', 'run-android', 'init'].includes(command)) {
   process.exit(1);
 }
 
+const args = getCommandParams(command, process.argv);
+
 if (command == 'init') {
-  init();
+  init(args);
 } else {
-  runTests(process, command);
+  runTests(command, args);
+}
+
+function getCommandParams(command, args) {
+  const commandIndex = args.indexOf(command);
+
+  return args.slice(commandIndex, args.length);
 }

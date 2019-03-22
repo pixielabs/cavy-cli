@@ -1,7 +1,10 @@
-const content = `import React, { Component } from 'react';
+function content(folderName) {
+  return (
+
+`import React, { Component } from 'react';
 import { AppRegistry } from 'react-native';
 import { Tester, TestHookStore } from 'cavy';
-import ExampleSpec from './specs/exampleSpec';
+import ExampleSpec from './${folderName}/exampleSpec';
 
 const testHookStore = new TestHookStore();
 
@@ -15,6 +18,8 @@ class AppWrapper extends Component {
   }
 }
 
-AppRegistry.registerComponent('youAppName', () => AppWrapper);`;
+AppRegistry.registerComponent('youAppName', () => AppWrapper);`
 
+  )
+}
 module.exports = content;
