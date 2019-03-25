@@ -6,6 +6,7 @@ const specContent = require('../templates/exampleSpec.js');
 const { existsSync, writeFileSync, mkdirSync } = require('fs');
 
 DEFAULT_TEST_DIR = 'specs';
+DEFAULT_ENTRY_FILE = 'index.test.js';
 
 // Sets up Cavy entry index file and example spec.
 function init(args) {
@@ -26,11 +27,16 @@ function init(args) {
   mkdirSync(`./${folderName}`);
   writeFileSync(`./${folderName}/exampleSpec.js`, specContent);
 
-  // Create an index.test.js file in the route of the project.
-  writeFileSync('index.test.js', indexContent(folderName));
+  // Don't overwrite any index.test.js file that already exists.
+  if (DEFAULT_ENTRY_FILE) {
+    console.log(`cavy: ${DEFAULT_ENTRY_FILE} already exists, skipping this step.`);
+  } else {
+    // Create an index.test.js file in the route of the project.
+    writeFileSync(DEFAULT_ENTRY_FILE, indexContent(folderName));
+  }
 
   // Exit
-  console.log('Done!');
+  console.log('cavy: Done!');
   process.exit(1);
 }
 
