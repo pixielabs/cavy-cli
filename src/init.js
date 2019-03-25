@@ -1,8 +1,11 @@
+// Command to set up Cavy within a repo
+// `cavy init`
+//
 const indexContent = require('../templates/index.test.js');
 const specContent = require('../templates/exampleSpec.js');
 const { existsSync, writeFileSync, mkdirSync } = require('fs');
 
-// This is called if the user types `cavy init`
+// Sets up Cavy entry index file and example spec.
 function init(args) {
   if (existsSync('index.js')) {
     console.log('Adding Cavy to your project...');
@@ -12,13 +15,13 @@ function init(args) {
     // This is used in the index.test.js file too.
     const folderName = args[1] || 'specs';
 
-    // Create an index.test.js file in the route of the project.
-    writeFileSync('index.test.js', indexContent(folderName));
-
     // Create a exampleTest.js file in the specified folder in the route of the
     // project.
     mkdirSync(`./${folderName}`);
     writeFileSync(`./${folderName}/exampleSpec.js`, specContent);
+
+    // Create an index.test.js file in the route of the project.
+    writeFileSync('index.test.js', indexContent(folderName));
 
     // Exit
     console.log('Done!');

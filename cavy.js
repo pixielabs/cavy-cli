@@ -3,6 +3,12 @@ const program = require('commander');
 const init = require('./src/init');
 const runTests = require('./src/runTests');
 
+function _getCommandParams(command, args) {
+  const commandIndex = args.indexOf(command);
+
+  return args.slice(commandIndex, args.length);
+}
+
 // Stop quitting unless we want to
 process.stdin.resume();
 
@@ -20,16 +26,10 @@ if (!['run-ios', 'run-android', 'init'].includes(command)) {
   process.exit(1);
 }
 
-const args = getCommandParams(command, process.argv);
+const args = _getCommandParams(command, process.argv);
 
 if (command == 'init') {
   init(args);
 } else {
   runTests(command, args);
-}
-
-function getCommandParams(command, args) {
-  const commandIndex = args.indexOf(command);
-
-  return args.slice(commandIndex, args.length);
 }

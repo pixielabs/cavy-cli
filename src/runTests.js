@@ -1,3 +1,6 @@
+// Command to run iOS or Android tests
+// `cavy run-ios` or `cavy run-android`
+//
 const server = require('../server');
 const { existsSync } = require('fs');
 const { spawn, execFileSync, execSync } = require('child_process');
@@ -17,8 +20,9 @@ function _getAdbPath() {
     : 'adb';
 }
 
-// This is called if the user types `cavy run-ios` or `cavy run-android`. The
-// command argument is one of `run-ios` or `run-android`.
+// Runs tests using the React Native CLI.
+// command: `cavy run-ios` or `cavy run-android`
+// args: any extra arguments the user would usually to pass to `react native run...`
 function runTests(command, args) {
   let testEntryPoint = false;
   // Check whether the app has an index.test.js file...
