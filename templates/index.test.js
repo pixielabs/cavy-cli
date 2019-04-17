@@ -18,7 +18,7 @@ class AppWrapper extends Component {
   }
 }
 
-AppRegistry.registerComponent('youAppName', () => AppWrapper);`
+AppRegistry.registerComponent('yourAppName', () => AppWrapper);`
 
   )
 }
