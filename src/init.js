@@ -5,11 +5,11 @@ const indexContent = require('../templates/index.test.js');
 const specContent = require('../templates/exampleSpec.js');
 const { existsSync, writeFileSync, mkdirSync } = require('fs');
 
+REACT_NATIVE_PATH = 'node_modules/react-native'
 DEFAULT_TEST_DIR = 'specs';
 DEFAULT_ENTRY_FILE = 'index.test.js';
 
-// Sets up Cavy entry index file and example spec.
-function init(args) {
+function setUpCavy(args) {
   console.log('cavy: Adding Cavy to your project...');
 
   // The first additional argument to cavy init is the name of the test
@@ -39,5 +39,16 @@ function init(args) {
   console.log('cavy: Done!');
   process.exit(1);
 }
+
+// Sets up Cavy entry index file and example spec.
+function init(args) {
+  // Check first that you're inside a React Native project.
+  if (existsSync(REACT_NATIVE_PATH)) {
+    setUpCavy(args);
+  } else {
+    console.log(`cavy: Make sure you're inside a React Native project and that you've run npm install.`);
+    process.exit(0)
+  }
+};
 
 module.exports = init;
