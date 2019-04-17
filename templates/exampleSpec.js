@@ -6,6 +6,7 @@ const content = `export default function(spec) {
       await spec.exists('LoginScreen');
       await spec.fillIn('LoginScreen.EmailInput', 'cavy@example.com');
       await spec.fillIn('LoginScreen.PasswordInput', 'password');
+      await spec.press('LoginScreen.Button');
       await spec.exists('WelcomeScreen');
     });
   });
