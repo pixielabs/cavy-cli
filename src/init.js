@@ -28,7 +28,7 @@ function init(args) {
   writeFileSync(`./${folderName}/exampleSpec.js`, specContent);
 
   // Don't overwrite any index.test.js file that already exists.
-  if (DEFAULT_ENTRY_FILE) {
+  if (existsSync(DEFAULT_ENTRY_FILE)) {
     console.log(`cavy: ${DEFAULT_ENTRY_FILE} already exists, skipping this step.`);
   } else {
     // Create an index.test.js file in the route of the project.
