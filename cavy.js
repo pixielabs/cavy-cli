@@ -3,33 +3,39 @@ const program = require('commander');
 const init = require('./src/init');
 const runTests = require('./src/runTests');
 
-function _getCommandParams(command, args) {
+function getCommandParams(command, args) {
   const commandIndex = args.indexOf(command);
-
   return args.slice(commandIndex, args.length);
 }
 
 // Stop quitting unless we want to
 process.stdin.resume();
 
-let command;
+program
+  .command('init [specFolderName]')
+  .description('Add cavy to a project with optional spec folder name')
+  .action(specFolderName => {
+    init(specFolderName);
+  });
 
-program.
-  version('0.0.3').
-  arguments('<run-ios|run-android|init>', 'react-native command to run').
-  action((cmd) => command = cmd).
-  parse(process.argv);
+program
+  .command('run-ios')
+  .description('Run cavy spec on an ios simulator or device')
+  .allowUnknownOption()
+  .action(cmd => {
+    const command = cmd.name();
+    const args = getCommandParams(command, process.argv);
+    runTests(command, args);
+  });
 
-// Check that the user has entered a valid argument
-if (!['run-ios', 'run-android', 'init'].includes(command)) {
-  program.outputHelp();
-  process.exit(1);
-}
+program
+  .command('run-android')
+  .description('Run cavy spec on an android simulator or device')
+  .allowUnknownOption()
+  .action(cmd => {
+    const command = cmd.name();
+    const args = getCommandParams(command, process.argv);
+    runTests(command, args);
+  });
 
-const args = _getCommandParams(command, process.argv);
-
-if (command == 'init') {
-  init(args);
-} else {
-  runTests(command, args);
-}
+program.parse(process.argv);
