@@ -9,12 +9,20 @@ REACT_NATIVE_PATH = 'node_modules/react-native'
 DEFAULT_TEST_DIR = 'specs';
 DEFAULT_ENTRY_FILE = 'index.test.js';
 
+// Takes a string a strips out any reserved characters for filenames on
+// Unix-like systems or Windows.
+function sanitiseFolderName(name) {
+  const regex = /[<>:"\/\\|?*]/g;
+  return name.replace(regex, '')
+}
+
+// Sets up Cavy entry index file and example spec.
 function setUpCavy(args) {
   console.log('cavy: Adding Cavy to your project...');
 
   // The first additional argument to cavy init is the name of the test
   // directory. This is used in the index.test.js file too.
-  const folderName = args[1] || DEFAULT_TEST_DIR;
+  const folderName = sanitiseFolderName(args[1]) || DEFAULT_TEST_DIR;
 
   if (existsSync(folderName)) {
     console.log(`cavy: Looks like a ./${folderName} directory already exists for this project.`);
@@ -40,13 +48,12 @@ function setUpCavy(args) {
   process.exit(1);
 }
 
-// Sets up Cavy entry index file and example spec.
+// Checks that you're inside a React Native project, and if so runs setUpCavy.
 function init(args) {
-  // Check first that you're inside a React Native project.
   if (existsSync(REACT_NATIVE_PATH)) {
     setUpCavy(args);
   } else {
-    console.log(`cavy: Make sure you're inside a React Native project and that you've run npm install.`);
+    console.log("cavy: Make sure you're inside a React Native project and that you've run npm install.");
     process.exit(0)
   }
 };
