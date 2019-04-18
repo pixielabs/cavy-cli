@@ -11,6 +11,8 @@ function getCommandParams(command, args) {
 // Stop quitting unless we want to
 process.stdin.resume();
 
+program.version('1.1.0');
+
 program
   .command('init [specFolderName]')
   .description('Add cavy to a project with optional spec folder name')

@@ -1,3 +1,8 @@
+# 1.1.0
+
+- New command `cavy init`, which adds example spec and index.test.js file to
+React Native apps.
+
 # 1.0.0
 
 - Use an index.test.js entry file if it's available.
