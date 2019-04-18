@@ -15,9 +15,8 @@ command line. When the tests finish the command outputs the results and quits
 with the relevant exit code (0 for success, 1 for failure) which can be used by
 continuous integration scripts to determine if the test suite passed or not.
 
-**cavy-cli is in an early stage of development**. But we are using it to test
-Cavy itself! Check out [our sample app Circle CI
-configuration](https://github.com/pixielabs/cavy/blob/master/.circleci/config.yml) 
+We use cavy-cli to test Cavy itself! Check out [our sample app Circle CI
+configuration](https://github.com/pixielabs/cavy/blob/master/.circleci/config.yml)
 for inspiration.
 
 ## Installation
@@ -34,18 +33,19 @@ or `yarn`:
 $ yarn global add cavy-cli
 ```
 
-Set the `sendReport` prop to `true` on your Cavy `<Tester>` component in your
-app:
+## Commands
 
-```jsx
-<Tester specs={...} store={...} sendReport={true}>
-...
-</Tester>
+```shell
+$ cavy init [specFolderName]
 ```
 
-## Basic usage
+Run `cavy init` inside your React Native project to set up testing with Cavy.
+Gives you an example spec and an `index.test.js` file from which Cavy will boot
+your app and run your specs. See [App entry point](#app-entry-point) below for
+how to tweak this file to suit your app.
 
-From within your React Native project, with Cavy already installed and set up
+`specFolderName` (optional) - the directory in which you'd like to keep your
+spec files. Defaults to `specs`.
 
 ```shell
 # To test on iOS
@@ -54,12 +54,24 @@ $ cavy run-ios
 # To test on Android
 $ cavy run-android
 ```
+Once you have Cavy and your tests set up, run either `cavy run-ios` or
+`cavy run-android` from within your project to run tests. Under the hood,
+**cavy-cli** calls react-native-cli commands. This means you can optionally pass
+in any react-native-cli options that are valid for either `react-native run-ios`
+or `react-native run-android`.
+
+## App entry point
 
 **cavy-cli** will use an `index.test.js` entry point if you have one in your
-React Native project. This allows you to set up your tests to only run
-when your app is built by **cavy-cli**.
+React Native project (running `cavy init` will automatically generate one for
+you).
 
-For example:
+This way tests will run when and only when your app is booted by **cavy-cli**.
+
+**Make sure the `sendReport` prop is set to `true` on your Cavy `<Tester>`
+component. cavy-cli will not receive test results otherwise.**
+
+Example set up:
 
 ```js
 // index.js
@@ -104,7 +116,6 @@ AppRegistry.registerComponent('AppName', () => AppWrapper);
 - Get a working example of an Android build in CI. We couldn't get an Android
   emulator running properly in Circle CI. If you have an example of
   **cavy-cli** working in CI for Android builds, please get in touch!
-- Pass through arguments to react-native command.
 
 ## Contributing
 
