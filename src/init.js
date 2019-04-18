@@ -11,9 +11,9 @@ DEFAULT_ENTRY_FILE = 'index.test.js';
 
 // Takes a string a strips out any reserved characters for filenames on
 // Unix-like systems or Windows.
-function sanitiseFolderName(name) {
+function folderNameInvalid(name) {
   const regex = /[<>:"\/\\|?*]/g;
-  return name.replace(regex, '')
+  return regex.test(name);
 }
 
 // Sets up Cavy entry index file and example spec.
@@ -23,12 +23,18 @@ function setUpCavy(specFolderName) {
   // The first additional argument to cavy init is the name of the test
   // directory. This is used in the index.test.js file too.
   let folderName = specFolderName || DEFAULT_TEST_DIR;
-  folderName = sanitiseFolderName(folderName);
 
+  // Exit if folder name invalid.
+  if (folderNameInvalid(folderName)) {
+    console.log("cavy: Folder name invalid. Please remove any reserved characters: <>:\"\/\\|?*");
+    process.exit(0);
+  }
+
+  // Exit if spec folder already exists.
   if (existsSync(folderName)) {
     console.log(`cavy: Looks like a ./${folderName} directory already exists for this project.`);
     console.log('cavy: To continue set up, re-run the command with an alternative test directory name: `cavy init <test-directory>`')
-    process.exit(0)
+    process.exit(0);
   }
 
   // Create a exampleTest.js file in the specified folder in the route of the
@@ -51,7 +57,6 @@ function setUpCavy(specFolderName) {
 
 // Checks that you're inside a React Native project, and if so runs setUpCavy.
 function init(specFolderName) {
-  console.log(specFolderName);
   if (existsSync(REACT_NATIVE_PATH)) {
     setUpCavy(specFolderName);
   } else {
