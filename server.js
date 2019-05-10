@@ -48,4 +48,10 @@ server.post('/report', (req, res) => {
   }
 });
 
+// Public: GET route that can be used to check whether the server is listening
+// without have to hit /report.
+server.get('/', (req, res) => {
+  res.send('cavy-cli running');
+});
+
 module.exports = server;
