@@ -1,3 +1,9 @@
+# 1.2.0
+
+- Added a new route to the internal web server so that Cavy can detect if
+  cavy-cli is running. This is part of the work we are doing to remove the need
+  for the `sendReport` prop (https://github.com/pixielabs/cavy/pull/125).
+
 # 1.1.0
 
 - New command `cavy init`, which adds example spec and index.test.js file to
