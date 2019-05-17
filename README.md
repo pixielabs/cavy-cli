@@ -106,8 +106,6 @@ AppRegistry.registerComponent('AppName', () => AppWrapper);
 
 ## TODO
 
-- Make this the default way of running Cavy; only run tests if **cavy-cli** is
-  waiting for test results.
 - Output to a report file so continuous integration tools can give a richer
   report of what tests passed/failed.
 - Output the test results in progress, not just when they are all finished.
