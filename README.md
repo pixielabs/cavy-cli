@@ -68,9 +68,6 @@ you).
 
 This way tests will run when and only when your app is booted by **cavy-cli**.
 
-**Make sure the `sendReport` prop is set to `true` on your Cavy `<Tester>`
-component. cavy-cli will not receive test results otherwise.**
-
 Example set up:
 
 ```js
@@ -94,7 +91,7 @@ const testHookStore = new TestHookStore();
 class AppWrapper extends Component {
   render() {
     return (
-      <Tester specs={[AppSpec]} store={testHookStore} sendReport={true}>
+      <Tester specs={[AppSpec]} store={testHookStore}>
         <App />
       </Tester>
     );
