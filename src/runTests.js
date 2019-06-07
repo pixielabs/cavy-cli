@@ -10,10 +10,10 @@ let switched = false;
 // Swap the user's test file into index.js to build the test app, and save a
 // temporary version of the entry file so we can put it back later.
 function switchEntryFile(entryFile, testEntryFile) {
-  console.log(`cavy: found an ${testEntryFile} entry point. Temporarily replacing ${entryFile} to run tests`);
+  console.log(`cavy: Found an ${testEntryFile} entry point. Temporarily replacing ${entryFile} to run tests.`);
 
   const cmd = `mv ${entryFile} index.notest.js && mv ${testEntryFile} index.js`;
-  console.log(`cavy: running \`${cmd}\`...`);
+  console.log(`cavy: Running \`${cmd}\`...`);
   execSync(cmd);
 
   // Save that we did this, so we can undo it later.
@@ -22,9 +22,9 @@ function switchEntryFile(entryFile, testEntryFile) {
 
 // If file changes have been made, revert them.
 function teardown(entryFile, testEntryFile) {
-  console.log(`cavy: putting your ${entryFile} back`);
+  console.log(`cavy: Putting your ${entryFile} back.`);
   const cmd = `mv index.js ${testEntryFile} && mv index.notest.js ${entryFile}`;
-  console.log(`cavy: running \`${cmd}\`...`);
+  console.log(`cavy: Running \`${cmd}\`...`);
   execSync(cmd);
 }
 
@@ -37,7 +37,7 @@ function runAdbReverse() {
     console.log(`cavy: Running ${adbPath} ${adbArgs.join(' ')}`);
     execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch(e) {
-    console.error(`Could not run adb reverse: ${e.message}`);
+    console.error(`Could not run adb reverse: ${e.message}.`);
     process.exit(1);
   }
 }
@@ -58,10 +58,19 @@ function runTests(command, file, args) {
   const entryFile = file || 'index.js';
   // Assume that the user has set up Cavy in a corresponding .test.js file.
   const testEntryFile = entryFile.replace(/\.js$/, '.test.js');
+  const testEntryFileExists = existsSync(testEntryFile);
+
+  // Warn the user and exit if no corresponding test file exists.
+  if (file && !testEntryFileExists) {
+    console.log(`cavy: Could not find test entry point named ${testEntryFile}.`);
+    process.exit(1);
+  }
+  
   // Check whether the app has this test file and if so, swap it into index.js.
-  if (existsSync(testEntryFile)) {
+  if (testEntryFileExists) {
     switchEntryFile(entryFile, testEntryFile);
   }
+
   // Handle reverting any file changes made before exiting the process.
   process.on('exit', () => {
     if (switched) {
@@ -75,7 +84,7 @@ function runTests(command, file, args) {
     process.exit(1);
   });
   // Build the app, start the test server and wait for results.
-  console.log(`cavy: running \`react-native ${command}\`...`);
+  console.log(`cavy: Running \`react-native ${command}\`...`);
 
   let rn = spawn('react-native', [command, ...args], { stdio: 'inherit' });
 
@@ -91,7 +100,7 @@ function runTests(command, file, args) {
       if (command == 'run-android') {
         runAdbReverse();
       }
-      console.log(`cavy: listening on port 8082 for test results...`);
+      console.log(`cavy: Listening on port 8082 for test results...`);
     });
   });
 }

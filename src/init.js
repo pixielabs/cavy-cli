@@ -27,14 +27,14 @@ function setUpCavy(specFolderName) {
   // Exit if folder name invalid.
   if (folderNameInvalid(folderName)) {
     console.log("cavy: Folder name invalid. Please remove any reserved characters: <>:\"\/\\|?*");
-    process.exit(0);
+    process.exit(1);
   }
 
   // Exit if spec folder already exists.
   if (existsSync(folderName)) {
     console.log(`cavy: Looks like a ./${folderName} directory already exists for this project.`);
     console.log('cavy: To continue set up, re-run the command with an alternative test directory name: `cavy init <test-directory>`')
-    process.exit(0);
+    process.exit(1);
   }
 
   // Create a exampleTest.js file in the specified folder in the route of the
@@ -52,7 +52,7 @@ function setUpCavy(specFolderName) {
 
   // Exit
   console.log('cavy: Done!');
-  process.exit(1);
+  process.exit(0);
 }
 
 // Checks that you're inside a React Native project, and if so runs setUpCavy.
@@ -61,7 +61,7 @@ function init(specFolderName) {
     setUpCavy(specFolderName);
   } else {
     console.log("cavy: Make sure you're inside a React Native project and that you've run npm install.");
-    process.exit(0)
+    process.exit(1)
   }
 };
 
