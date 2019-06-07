@@ -3,9 +3,9 @@ const program = require('commander');
 const init = require('./src/init');
 const runTests = require('./src/runTests');
 
-function getCommandParams(cmd) {
-  // Get array of Cavy options.
-  const options = cmd.options.map(option => option.short);
+function getCommandArgs(cmd) {
+  // Get array of Cavy options (short and long).
+  const options = cmd.options.map(option => [option.short, option.long]).flat();
   // Get array of all command line args.
   const allArgs = process.argv;
   const commandIndex = allArgs.indexOf(cmd.name());
@@ -20,9 +20,10 @@ function getCommandParams(cmd) {
 }
 
 function test(cmd) {
-  const args = getCommandParams(cmd);
+  const args = getCommandArgs(cmd);
   const commandName = cmd.name();
-  runTests(commandName, args);
+  const entryFile = cmd.file;
+  runTests(commandName, entryFile, args);
 }
 
 // Stop quitting unless we want to
