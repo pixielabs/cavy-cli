@@ -5,17 +5,23 @@ const runTests = require('./src/runTests');
 
 function getCommandArgs(cmd) {
   // Get array of Cavy options (short and long).
-  const options = cmd.options.map(option => [option.short, option.long]).flat();
+  const options = cmd.options.map(option => [option.short, option.long]);
   // Get array of all command line args.
   const allArgs = process.argv;
   const commandIndex = allArgs.indexOf(cmd.name());
   const args = allArgs.slice(commandIndex, allArgs.length)
-  // Remove Cavy options from other options, so that RN cli doesn't try to call
-  // them.
+  
+  // Remove Cavy options from other args so RN cli doesn't try to call them.
   options.forEach(option => {
-    args.forEach((arg, i) => { if (arg == option) args.splice(i, 2) });
+    for (var i = 0; i < args.length; i++) {
+      if (option.includes(args[i])) {
+        args.splice(i, 2)
+        // Only remove the first instance of the match - the second might be
+        // a valid RN CLI command option.
+        break;
+      };
+    }
   });
-
   return args;
 }
 
