@@ -49,10 +49,10 @@ spec files. Defaults to `specs`.
 
 ```shell
 # To test on iOS
-$ cavy run-ios
+$ cavy run-ios [options]
 
 # To test on Android
-$ cavy run-android
+$ cavy run-android [options]
 ```
 Once you have Cavy and your tests set up, run either `cavy run-ios` or
 `cavy run-android` from within your project to run tests. Under the hood,
@@ -100,6 +100,23 @@ class AppWrapper extends Component {
 
 AppRegistry.registerComponent('AppName', () => AppWrapper);
 ```
+
+## Specifying a custom app entry point
+
+If your app uses an entry point other than `index.js`, run cavy test commands
+with the `--file` flag, followed by the filename as a string. For example:
+
+```shell
+$ cavy run-ios --file index.ios.js
+```
+
+You must also have a corresponding test entry point which includes Cavy. This
+file should be named the same as your entry point, but suffixed with `.test.js`.
+For example, if your app entry point is `index.ios.js`, your test entry point
+should be called `index.ios.test.js`.
+
+If you're using any extra react-native-cli options, include these after the
+cavy-cli `--file` flag.
 
 ## TODO
 
