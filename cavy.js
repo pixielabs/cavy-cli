@@ -4,17 +4,15 @@ const init = require('./src/init');
 const runTests = require('./src/runTests');
 
 function getCommandArgs(cmd) {
-  // Get array of Cavy options (short and long).
-  const options = cmd.options.map(option => [option.short, option.long]);
   // Get array of all command line args.
   const allArgs = process.argv;
   const commandIndex = allArgs.indexOf(cmd.name());
   const args = allArgs.slice(commandIndex, allArgs.length)
 
   // Remove Cavy options from other args so RN cli doesn't try to call them.
-  options.forEach(option => {
+  cmd.options.forEach(option => {
     for (var i = 0; i < args.length; i++) {
-      if (option.includes(args[i])) {
+      if ([option.short, option.long].includes(args[i])) {
         // Remove the option flag itself and its value.
         args.splice(i, 2)
         // Only remove the first instance of the match - the second might be

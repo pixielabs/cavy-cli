@@ -54,10 +54,19 @@ function getAdbPath() {
 // file: the file to boot the app from, supplied as a command option
 // args: any extra arguments the user would usually to pass to `react native run...`
 function runTests(command, file, args) {
+
   // Assume entry file is 'index.js' if user doesn't supply one.
   const entryFile = file || 'index.js';
+  const regex = /\.js$/;
+
+  // Check that the app entry file ends in .js before continuing.
+  if (!regex.test(entryFile)) {
+    console.log(`cavy: Please provide an app entry file that ends in .js`);
+    process.exit(1);
+  }
+
   // Assume that the user has set up Cavy in a corresponding .test.js file.
-  const testEntryFile = entryFile.replace(/\.js$/, '.test.js');
+  const testEntryFile = entryFile.replace(regex, '.test.js');
   const testEntryFileExists = existsSync(testEntryFile);
 
   // Warn the user and exit if no corresponding test file exists.
