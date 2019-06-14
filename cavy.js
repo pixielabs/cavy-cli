@@ -3,9 +3,32 @@ const program = require('commander');
 const init = require('./src/init');
 const runTests = require('./src/runTests');
 
-function getCommandParams(command, args) {
-  const commandIndex = args.indexOf(command);
-  return args.slice(commandIndex, args.length);
+function getCommandArgs(cmd) {
+  // Get array of all command line args.
+  const allArgs = process.argv;
+  const commandIndex = allArgs.indexOf(cmd.name());
+  const args = allArgs.slice(commandIndex, allArgs.length)
+
+  // Remove Cavy options from other args so RN cli doesn't try to call them.
+  cmd.options.forEach(option => {
+    for (var i = 0; i < args.length; i++) {
+      if ([option.short, option.long].includes(args[i])) {
+        // Remove the option flag itself and its value.
+        args.splice(i, 2)
+        // Only remove the first instance of the match - the second might be
+        // a valid RN CLI command option.
+        break;
+      };
+    }
+  });
+  return args;
+}
+
+function test(cmd) {
+  const args = getCommandArgs(cmd);
+  const commandName = cmd.name();
+  const entryFile = cmd.file;
+  runTests(commandName, entryFile, args);
 }
 
 // Stop quitting unless we want to
@@ -23,21 +46,15 @@ program
 program
   .command('run-ios')
   .description('Run cavy spec on an ios simulator or device')
+  .option('-f, --file <file>', 'App entry file')
   .allowUnknownOption()
-  .action(cmd => {
-    const command = cmd.name();
-    const args = getCommandParams(command, process.argv);
-    runTests(command, args);
-  });
+  .action(cmd => test(cmd));
 
 program
   .command('run-android')
   .description('Run cavy spec on an android simulator or device')
+  .option('-f, --file <file>', 'App entry file')
   .allowUnknownOption()
-  .action(cmd => {
-    const command = cmd.name();
-    const args = getCommandParams(command, process.argv);
-    runTests(command, args);
-  });
+  .action(cmd => test(cmd));
 
 program.parse(process.argv);
