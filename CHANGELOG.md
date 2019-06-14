@@ -1,3 +1,8 @@
+# 1.3.0
+
+- New `--file` option for commands `cavy run-ios` and `cavy run-android` for
+  users with non-standard app entry files.
+
 # 1.2.0
 
 - Added a new route to the internal web server so that Cavy can detect if
