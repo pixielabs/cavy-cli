@@ -1,3 +1,8 @@
+# 1.3.1
+
+- Removed deprecated prop from `index.test.js` template
+- Fixed example spec description
+
 # 1.3.0
 
 - New `--file` option for commands `cavy run-ios` and `cavy run-android` for
