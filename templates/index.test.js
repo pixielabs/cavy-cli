@@ -11,7 +11,7 @@ const testHookStore = new TestHookStore();
 class AppWrapper extends Component {
   render() {
     return (
-      <Tester specs={[ExampleSpec]} store={testHookStore} sendReport={true}>
+      <Tester specs={[ExampleSpec]} store={testHookStore}>
         // Your app goes here
       </Tester>
     );
