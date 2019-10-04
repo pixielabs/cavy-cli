@@ -95,7 +95,10 @@ function runTests(command, file, args) {
   // Build the app, start the test server and wait for results.
   console.log(`cavy: Running \`react-native ${command}\`...`);
 
-  let rn = spawn('react-native', [command, ...args], { stdio: 'inherit' });
+  let rn = spawn('react-native', [command, ...args], {
+    stdio: 'inherit',
+    shell: true
+  });
 
   // Wait for the app to build first...
   rn.on('close', (code) => {
