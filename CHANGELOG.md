@@ -1,3 +1,7 @@
+# 1.3.2
+
+- Fix issue with spawning React Native on Windows.
+
 # 1.3.1
 
 - Removed deprecated prop from `index.test.js` template
