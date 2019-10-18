@@ -12,7 +12,7 @@ let switched = false;
 function switchEntryFile(entryFile, testEntryFile) {
   console.log(`cavy: Found an ${testEntryFile} entry point. Temporarily replacing ${entryFile} to run tests.`);
 
-  const cmd = `mv ${entryFile} index.notest.js && mv ${testEntryFile} index.js`;
+  const cmd = `mv ${entryFile} index.notest.js && mv ${testEntryFile} ${entryFile}`;
   console.log(`cavy: Running \`${cmd}\`...`);
   execSync(cmd);
 
@@ -23,7 +23,7 @@ function switchEntryFile(entryFile, testEntryFile) {
 // If file changes have been made, revert them.
 function teardown(entryFile, testEntryFile) {
   console.log(`cavy: Putting your ${entryFile} back.`);
-  const cmd = `mv index.js ${testEntryFile} && mv index.notest.js ${entryFile}`;
+  const cmd = `mv ${entryFile} ${testEntryFile} && mv index.notest.js ${entryFile}`;
   console.log(`cavy: Running \`${cmd}\`...`);
   execSync(cmd);
 }
