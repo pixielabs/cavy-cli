@@ -1,3 +1,9 @@
+# 1.3.3
+
+- Fix bug whereby a test entry file was always renamed to `index.js` rather than
+the custom entry file specified with `--file` option. Thanks [TheAlmightyBob](https://github.com/TheAlmightyBob)
+for spotting and fixing this!
+
 # 1.3.2
 
 - Fix issue with spawning React Native on Windows.
