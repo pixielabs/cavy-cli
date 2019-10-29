@@ -49,11 +49,22 @@ function getAdbPath() {
     : 'adb';
 }
 
+function runServer(command) {
+  // ... start test server, listening for test results to be posted.
+  const app = server.listen(8082, () => {
+    if (command == 'run-android') {
+      runAdbReverse();
+    }
+    console.log(`cavy: Listening on port 8082 for test results...`);
+  });
+}
+
 // Runs tests using the React Native CLI.
 // command: `cavy run-ios` or `cavy run-android`
 // file: the file to boot the app from, supplied as a command option
+// nobuild: whether to skip the React Native build/run step
 // args: any extra arguments the user would usually to pass to `react native run...`
-function runTests(command, file, args) {
+function runTests(command, file, nobuild, args) {
 
   // Assume entry file is 'index.js' if user doesn't supply one.
   const entryFile = file || 'index.js';
@@ -92,29 +103,28 @@ function runTests(command, file, args) {
     console.log('cavy: Received SIGINT, cleaning up');
     process.exit(1);
   });
-  // Build the app, start the test server and wait for results.
-  console.log(`cavy: Running \`react-native ${command}\`...`);
 
-  let rn = spawn('react-native', [command, ...args], {
-    stdio: 'inherit',
-    shell: true
-  });
+  if (nobuild) {
+    runServer(command);
+  } else {
+    // Build the app, start the test server and wait for results.
+    console.log(`cavy: Running \`react-native ${command}\`...`);
 
-  // Wait for the app to build first...
-  rn.on('close', (code) => {
-    console.log(`cavy: react-native exited with code ${code}.`);
-    // ... quit if something went wrong.
-    if (code) {
-      return process.exit(code);
-    }
-    // ... start test server, listening for test results to be posted.
-    const app = server.listen(8082, () => {
-      if (command == 'run-android') {
-        runAdbReverse();
-      }
-      console.log(`cavy: Listening on port 8082 for test results...`);
+    let rn = spawn('react-native', [command, ...args], {
+      stdio: 'inherit',
+      shell: true
     });
-  });
+
+    // Wait for the app to build first...
+    rn.on('close', (code) => {
+      console.log(`cavy: react-native exited with code ${code}.`);
+      // ... quit if something went wrong.
+      if (code) {
+        return process.exit(code);
+      }
+      runServer(command);
+    });
+  }
 }
 
 module.exports = runTests;

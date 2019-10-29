@@ -28,7 +28,8 @@ function test(cmd) {
   const args = getCommandArgs(cmd);
   const commandName = cmd.name();
   const entryFile = cmd.file;
-  runTests(commandName, entryFile, args);
+  const nobuild = cmd.nobuild;
+  runTests(commandName, entryFile, nobuild, args);
 }
 
 // Stop quitting unless we want to
@@ -47,6 +48,10 @@ program
   .command('run-ios')
   .description('Run cavy spec on an ios simulator or device')
   .option('-f, --file <file>', 'App entry file')
+  .option(
+    '-nb, --nobuild',
+    'Just swap the index files and start the results server without building/running the app, for use with quick reload'
+  )
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
@@ -54,6 +59,10 @@ program
   .command('run-android')
   .description('Run cavy spec on an android simulator or device')
   .option('-f, --file <file>', 'App entry file')
+  .option(
+    '-nb, --nobuild',
+    'Just swap the index files and start the results server without building/running the app, for use with quick reload'
+  )
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
