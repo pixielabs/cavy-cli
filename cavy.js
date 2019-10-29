@@ -29,7 +29,8 @@ function test(cmd) {
   const commandName = cmd.name();
   const entryFile = cmd.file;
   const nobuild = cmd.nobuild;
-  runTests(commandName, entryFile, nobuild, args);
+  const dev = cmd.dev;
+  runTests(commandName, entryFile, nobuild, dev, args);
 }
 
 // Stop quitting unless we want to
@@ -52,6 +53,7 @@ program
     '-nb, --nobuild',
     'Just swap the index files and start the results server without building/running the app, for use with quick reload'
   )
+  .option('-d, --dev', 'Keep report server alive until manually killed')
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
@@ -63,6 +65,7 @@ program
     '-nb, --nobuild',
     'Just swap the index files and start the results server without building/running the app, for use with quick reload'
   )
+  .option('-d, --dev', 'Keep report server alive until manually killed')
   .allowUnknownOption()
   .action(cmd => test(cmd));
 

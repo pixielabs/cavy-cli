@@ -40,11 +40,15 @@ server.post('/report', (req, res) => {
   if (!errorCount) {
     console.log(chalk.green(endMsg));
     res.send('ok');
-    process.exit(0);
+    if (!req.app.locals.dev) {
+      process.exit(0);
+    }
   } else {
     console.log(chalk.red(endMsg));
     res.send('failed');
-    process.exit(1);
+    if (!req.app.locals.dev) {
+      process.exit(1);
+    }
   }
 });
 
