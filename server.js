@@ -50,6 +50,7 @@ server.post('/report', (req, res) => {
       process.exit(1);
     }
   }
+  console.log('--------------------');
 });
 
 // Public: GET route that can be used to check whether the server is listening
