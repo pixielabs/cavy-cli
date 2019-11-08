@@ -49,8 +49,8 @@ function getAdbPath() {
     : 'adb';
 }
 
+// Start test server, listening for test results to be posted.
 function runServer(command, dev) {
-  // ... start test server, listening for test results to be posted.
   server.locals.dev = dev;
   const app = server.listen(8082, () => {
     if (command == 'run-android') {
