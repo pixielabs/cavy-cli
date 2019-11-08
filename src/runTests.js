@@ -63,10 +63,10 @@ function runServer(command, dev) {
 // Runs tests using the React Native CLI.
 // command: `cavy run-ios` or `cavy run-android`
 // file: the file to boot the app from, supplied as a command option
-// nobuild: whether to skip the React Native build/run step
+// skipbuild: whether to skip the React Native build/run step
 // dev: whether to keep the server alive after tests finish
 // args: any extra arguments the user would usually to pass to `react native run...`
-function runTests(command, file, nobuild, dev, args) {
+function runTests(command, file, skipbuild, dev, args) {
 
   // Assume entry file is 'index.js' if user doesn't supply one.
   const entryFile = file || 'index.js';
@@ -106,7 +106,7 @@ function runTests(command, file, nobuild, dev, args) {
     process.exit(1);
   });
 
-  if (nobuild) {
+  if (skipbuild) {
     runServer(command, dev);
   } else {
     // Build the app, start the test server and wait for results.
