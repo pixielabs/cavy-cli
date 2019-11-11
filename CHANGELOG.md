@@ -1,3 +1,10 @@
+# 1.4.0
+
+- New options `--skipbuild` and `--dev` for running cavy tests without first
+building the app and keeping the report server alive between test runs,
+respectively. Thanks to [TheAlmightyBob](https://github.com/TheAlmightyBob) for
+these new features!
+
 # 1.3.3
 
 - Fix bug whereby a test entry file was always renamed to `index.js` rather than
