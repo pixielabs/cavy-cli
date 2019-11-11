@@ -1,3 +1,7 @@
+# 1.4.1
+
+- Help text tweaks for options.
+
 # 1.4.0
 
 - New options `--skipbuild` and `--dev` for running cavy tests without first
