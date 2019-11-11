@@ -28,7 +28,9 @@ function test(cmd) {
   const args = getCommandArgs(cmd);
   const commandName = cmd.name();
   const entryFile = cmd.file;
-  runTests(commandName, entryFile, args);
+  const skipbuild = cmd.skipbuild;
+  const dev = cmd.dev;
+  runTests(commandName, entryFile, skipbuild, dev, args);
 }
 
 // Stop quitting unless we want to
@@ -47,6 +49,11 @@ program
   .command('run-ios')
   .description('Run cavy spec on an ios simulator or device')
   .option('-f, --file <file>', 'App entry file')
+  .option(
+    '-s, --skipbuild',
+    'Just swap the index files and start the results server without building/running the app, for use with quick reload'
+  )
+  .option('-d, --dev', 'Keep report server alive until manually killed')
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
@@ -54,6 +61,11 @@ program
   .command('run-android')
   .description('Run cavy spec on an android simulator or device')
   .option('-f, --file <file>', 'App entry file')
+  .option(
+    '-s, --skipbuild',
+    'Just swap the index files and start the results server without building/running the app, for use with quick reload'
+  )
+  .option('-d, --dev', 'Keep report server alive until manually killed')
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
