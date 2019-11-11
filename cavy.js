@@ -48,10 +48,10 @@ program
 program
   .command('run-ios')
   .description('Run cavy spec on an ios simulator or device')
-  .option('-f, --file <file>', 'App entry file')
+  .option('-f, --file <file>', 'App entry file (defaults to index.js)')
   .option(
     '-s, --skipbuild',
-    'Just swap the index files and start the results server without building/running the app, for use with quick reload'
+    'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
   .allowUnknownOption()
@@ -60,10 +60,10 @@ program
 program
   .command('run-android')
   .description('Run cavy spec on an android simulator or device')
-  .option('-f, --file <file>', 'App entry file')
+  .option('-f, --file <file>', 'App entry file (defaults to index.js)')
   .option(
     '-s, --skipbuild',
-    'Just swap the index files and start the results server without building/running the app, for use with quick reload'
+    'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
   .allowUnknownOption()
