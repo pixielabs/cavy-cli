@@ -1,6 +1,8 @@
 const express = require('express');
 const server = express();
 const chalk = require('chalk');
+const { writeFileSync } = require('fs');
+const parser = require('xml2json');
 
 server.use(express.json());
 
@@ -13,11 +15,92 @@ function countString(count, str) {
   return `${count} ${string}`;
 };
 
+// Example JSON:
+// {
+//   "testsuites": {
+//     "testsuite": [
+//       {
+//         "name": "This is the test title",
+//         "errors": "0"
+//         "skipped": "0",
+//         "tests": "3",
+//         "failures": "1",
+//         "time": "This is the total time in seconds",
+//         "timestamp": "This is the start timestamp (make up for now)",
+//         "testcase": [
+//           {
+//             "name": "This is the test message 1",
+//             "time": "This is the individual test time",
+//             "failure":
+//               {
+//                 "message": "test failure",
+//                 "$t":"this is where the error message goes"
+//               }
+//           },
+//           {
+//             "name": "this is the test message 2",
+//             "time": "0",
+//             "skipped": {}
+//           },
+//           {
+//             "name": "this is the test message 3",
+//             "time": "0"
+//           }
+//         ]
+//       }
+//     ]
+//   }
+// }
+
+function formattedCase(testcase) {
+  if (testcase.error) {
+    testcase.failure = {
+      message: 'test failure',
+      $t: testcase.error
+    }
+  }
+  ['passed', 'error'].forEach(k => delete testcase[k]);
+  return testcase;
+}
+
+function formattedSuite(suite) {
+  return (
+    {
+      name: suite.name,
+      errors: 0,
+      skipped: 0,
+      tests: suite.testcases.length,
+      failures: suite.testcases.filter(testcase => testcase.error).length,
+      time: suite.time,
+      timestamp: suite.timestamp,
+      testCase: suite.testcases.map(testcase => formattedCase(testcase))
+    }
+  )
+}
+
+function constructXML(results) {
+  const filename = 'cavy_results.xml';
+  console.log(`Writing results to XML ${filename}`);
+
+  let formattedResults = {
+    "testsuites": {
+      "testsuite": results.map(suite => formattedSuite(suite))
+    }
+  }
+
+  const stringified = JSON.stringify(formattedResults);
+  const xml = parser.toXml(stringified);
+
+  writeFileSync(filename, xml);
+}
+
 // Public: POST route which accepts json report object, console logs the results
 // and quits the process with either exit code 1 or 0 depending on whether any
 // tests failed.
 server.post('/report', (req, res) => {
+
   const results = req.body['results'];
+  const resultsJson = req.body['fullResults'];
   const errorCount = req.body['errorCount'];
   const duration = req.body['duration'];
 
@@ -35,6 +118,8 @@ server.post('/report', (req, res) => {
 
   console.log(`Finished in ${duration} seconds`);
   const endMsg = `${countString(results.length, 'example')}, ${countString(errorCount, 'failure')}`;
+
+  constructXML(resultsJson)
 
   // If all tests pass, exit with code 0, else code 1
   if (!errorCount) {
