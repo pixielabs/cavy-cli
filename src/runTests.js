@@ -28,12 +28,12 @@ function teardown(entryFile, testEntryFile) {
   execSync(cmd);
 }
 
-function runAdbReverse() {
+function runAdbReverse(port) {
   try {
-    // Run ADB reverse tcp:8082 tcp:8082 to allow reporting of test results
+    // Run ADB reverse tcp:<port> tcp:<port> to allow reporting of test results
     // from React Native. Borrowed from react-native-cli.
     const adbPath = getAdbPath();
-    const adbArgs = ['reverse', 'tcp:8082', 'tcp:8082'];
+    const adbArgs = ['reverse', `tcp:${port}`, `tcp:${port}`];
     console.log(`cavy: Running ${adbPath} ${adbArgs.join(' ')}`);
     execFileSync(adbPath, adbArgs, {stdio: 'inherit'});
   } catch(e) {
@@ -50,13 +50,14 @@ function getAdbPath() {
 }
 
 // Start test server, listening for test results to be posted.
-function runServer(command, dev) {
+function runServer(command, dev, port) {
   server.locals.dev = dev;
-  const app = server.listen(8082, () => {
+  const serverPort = port !== undefined ? port : 8082
+  const app = server.listen(serverPort, () => {
     if (command == 'run-android') {
-      runAdbReverse();
+      runAdbReverse(serverPort);
     }
-    console.log(`cavy: Listening on port 8082 for test results...`);
+    console.log(`cavy: Listening on port ${serverPort} for test results...`);
   });
 }
 
@@ -66,7 +67,7 @@ function runServer(command, dev) {
 // skipbuild: whether to skip the React Native build/run step
 // dev: whether to keep the server alive after tests finish
 // args: any extra arguments the user would usually to pass to `react native run...`
-function runTests(command, file, skipbuild, dev, args) {
+function runTests(command, file, skipbuild, dev, port, args) {
 
   // Assume entry file is 'index.js' if user doesn't supply one.
   const entryFile = file || 'index.js';
@@ -107,7 +108,7 @@ function runTests(command, file, skipbuild, dev, args) {
   });
 
   if (skipbuild) {
-    runServer(command, dev);
+    runServer(command, dev, port);
   } else {
     // Build the app, start the test server and wait for results.
     console.log(`cavy: Running \`react-native ${command}\`...`);
@@ -124,7 +125,7 @@ function runTests(command, file, skipbuild, dev, args) {
       if (code) {
         return process.exit(code);
       }
-      runServer(command, dev);
+      runServer(command, dev, port);
     });
   }
 }

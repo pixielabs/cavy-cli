@@ -30,7 +30,8 @@ function test(cmd) {
   const entryFile = cmd.file;
   const skipbuild = cmd.skipbuild;
   const dev = cmd.dev;
-  runTests(commandName, entryFile, skipbuild, dev, args);
+  const port = cmd.port;
+  runTests(commandName, entryFile, skipbuild, dev, port, args);
 }
 
 // Stop quitting unless we want to
@@ -54,6 +55,7 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
+  .option('-p, --port <port>', 'Port to run Cavy on')
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
@@ -66,6 +68,7 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
+  .option('-p, --port <port>', 'Port to run Cavy on')
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
