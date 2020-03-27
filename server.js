@@ -23,14 +23,13 @@ function countString(count, str) {
 //         "name": "This is the test title",
 //         "errors": "0"
 //         "skipped": "0",
-//         "tests": "3",
+//         "tests": "2",
 //         "failures": "1",
 //         "time": "This is the total time in seconds",
-//         "timestamp": "This is the start timestamp (make up for now)",
+//         "timestamp": "This is the start timestamp",
 //         "testcase": [
 //           {
 //             "name": "This is the test message 1",
-//             "time": "This is the individual test time",
 //             "failure":
 //               {
 //                 "message": "test failure",
@@ -38,13 +37,7 @@ function countString(count, str) {
 //               }
 //           },
 //           {
-//             "name": "this is the test message 2",
-//             "time": "0",
-//             "skipped": {}
-//           },
-//           {
-//             "name": "this is the test message 3",
-//             "time": "0"
+//             "name": "this is the test message 3"
 //           }
 //         ]
 //       }
@@ -52,14 +45,16 @@ function countString(count, str) {
 //   }
 // }
 
-function formattedCase(testcase) {
-  if (testcase.error) {
+function formattedCase(testcase) {  
+  if (testcase.errorMsg) {
     testcase.failure = {
-      message: 'test failure',
-      $t: testcase.error
+      message: testcase.name,
+      $t: testcase.errorMsg
     }
   }
-  ['passed', 'error'].forEach(k => delete testcase[k]);
+
+  ['passed', 'errorMsg', 'message'].forEach(k => delete testcase[k]);
+
   return testcase;
 }
 
@@ -67,10 +62,8 @@ function formattedSuite(suite) {
   return (
     {
       name: suite.name,
-      errors: 0,
-      skipped: 0,
       tests: suite.testcases.length,
-      failures: suite.testcases.filter(testcase => testcase.error).length,
+      failures: suite.testcases.filter(testcase => testcase.errorMsg).length,
       time: suite.time,
       timestamp: suite.timestamp,
       testCase: suite.testcases.map(testcase => formattedCase(testcase))
