@@ -1,8 +1,7 @@
 const express = require('express');
 const server = express();
 const chalk = require('chalk');
-const { writeFileSync } = require('fs');
-const parser = require('xml2json');
+const constructXML = require('./src/junitFormatter');
 
 server.use(express.json());
 
@@ -13,48 +12,6 @@ server.use(express.json());
 function countString(count, str) {
   let string = (count == 1) ? str : str + 's';
   return `${count} ${string}`;
-};
-
-function formattedCase(testcase) {  
-  if (testcase.errorMsg) {
-    testcase.failure = {
-      message: testcase.name,
-      $t: testcase.errorMsg
-    }
-  }
-
-  ['passed', 'errorMsg', 'message'].forEach(k => delete testcase[k]);
-
-  return testcase;
-}
-
-function formattedSuite(suite) {
-  return (
-    {
-      name: suite.name,
-      timestamp: suite.timestamp,
-      tests: suite.testcases.length,
-      failures: suite.testcases.filter(testcase => testcase.errorMsg).length,
-      errors: 0,
-      testCase: suite.testcases.map(testcase => formattedCase(testcase))
-    }
-  )
-}
-
-function constructXML(results) {
-  const filename = 'cavy_results.xml';
-  console.log(`Writing results to XML ${filename}`);
-
-  let formattedResults = {
-    "testsuites": {
-      "testsuite": results.map(suite => formattedSuite(suite))
-    }
-  }
-
-  const stringified = JSON.stringify(formattedResults);
-  const xml = parser.toXml(stringified);
-
-  writeFileSync(filename, xml);
 }
 
 // Public: POST route which accepts json report object, console logs the results
@@ -82,7 +39,7 @@ server.post('/report', (req, res) => {
   const endMsg = `${countString(results.length, 'example')}, ${countString(errorCount, 'failure')}`;
 
   // If requested, construct XML report.
-  if (req.app.locals.xml) {    
+  if (req.app.locals.xml) {
     constructXML(resultsJson);
   }
 
