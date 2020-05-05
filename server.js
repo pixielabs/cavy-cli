@@ -43,7 +43,7 @@ function formattedSuite(suite) {
 
 function constructXML(results) {
   const filename = 'cavy_results.xml';
-  console.log(`Writing results to XML ${filename}`);
+  console.log(`Writing results to ${filename}`);
 
   let formattedResults = {
     "testsuites": {
