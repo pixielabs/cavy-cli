@@ -1,6 +1,20 @@
 const { writeFileSync } = require('fs');
 var xml2js = require('xml2js');
 
+// Private: Returns a failure XML element, with required properties and inner
+// text.
+function formattedTestError(test) {
+  return {
+    $: {
+      message: test.message,
+      // At the moment, Cavy doesn't have different failure types.
+      type: 'cavy test failure'
+    },
+    _: test.errorMessage
+  }
+}
+
+// Private: Returns a testcase XML element, with required properties.
 function formattedTestCase(test) {
   const formattedTest = {
     $: {
@@ -10,18 +24,13 @@ function formattedTestCase(test) {
     }
   }
 
-  if (test.errorMessage) {
-    formattedTest.failure = {
-      $: { message: test.message },
-      _: test.errorMessage
-    }
-  }
-
+  // If the test failed, add a failure XML element.
+  if (test.errorMessage) { formattedTest.failure = formattedTestError(test) }
   return formattedTest;
 }
 
-// Takes a result object and tranforms into XML according to the JUnit reporting
-// specifications.
+// Public: Takes a result object and tranforms into XML according to the JUnit
+// reporting specifications.
 function constructXML(results) {
   const filename = 'cavy_results.xml';
   console.log(`Writing results to ${filename}`);
@@ -33,12 +42,13 @@ function constructXML(results) {
         name: 'cavy',
         tests: results.length,
         failures: results.testCases.filter(test => test.errorMessage).length,
+        // At the moment, cavy reports an error in the same way as a failure.
         errors: 0,
         time: results.time,
         timestamp: results.timestamp,
         hostname: 'hostname'
       },
-      testCase: results.testCases.map(test => formattedTestCase(test))
+      testcase: results.testCases.map(test => formattedTestCase(test))
     }
   }
 

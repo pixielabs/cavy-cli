@@ -18,10 +18,7 @@ function countString(count, str) {
 // and quits the process with either exit code 1 or 0 depending on whether any
 // tests failed.
 server.post('/report', (req, res) => {
-  const results = req.body['results'];
-  const fullResults = req.body['fullResults'];
-  const errorCount = req.body['errorCount'];
-  const duration = req.body['duration'];
+  const { results, fullResults, errorCount, duration } = req.body;
 
   results.forEach((result, index) => {
     message = `${index + 1}) ${result['message']}`;
