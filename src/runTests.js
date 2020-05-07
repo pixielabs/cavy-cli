@@ -66,6 +66,7 @@ function runServer(command, dev, xml) {
 // file: the file to boot the app from, supplied as a command option
 // skipbuild: whether to skip the React Native build/run step
 // dev: whether to keep the server alive after tests finish
+// xml: whether to write and save the results to XML file
 // args: any extra arguments the user would usually to pass to `react native run...`
 function runTests(command, file, skipbuild, dev, xml, args) {
 
