@@ -1,5 +1,6 @@
 const { writeFileSync } = require('fs');
 var xml2js = require('xml2js');
+var os = require('os');
 
 // Private: Returns a failure XML element, with required properties and inner
 // text.
@@ -46,7 +47,7 @@ function constructXML(results) {
         errors: 0,
         time: results.time,
         timestamp: results.timestamp,
-        hostname: 'hostname'
+        hostname: os.hostname()
       },
       testcase: results.testCases.map(test => formattedTestCase(test))
     }
