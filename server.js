@@ -19,7 +19,7 @@ function countString(count, str) {
 // tests failed.
 server.post('/report', (req, res) => {
   const results = req.body['results'];
-  const resultsJson = req.body['fullResults'];
+  const fullResults = req.body['fullResults'];
   const errorCount = req.body['errorCount'];
   const duration = req.body['duration'];
 
@@ -40,7 +40,7 @@ server.post('/report', (req, res) => {
 
   // If requested, construct XML report.
   if (req.app.locals.xml) {
-    constructXML(resultsJson);
+    constructXML(fullResults);
   }
 
   // If all tests pass, exit with code 0, else code 1

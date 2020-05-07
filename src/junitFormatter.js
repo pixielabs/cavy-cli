@@ -1,28 +1,23 @@
 const { writeFileSync } = require('fs');
 var xml2js = require('xml2js');
 
-function formattedCase(testcase) {  
-  if (testcase.errorMsg) {
-    testcase.failure = {
-      message: testcase.name,
-      $t: testcase.errorMsg
+function formattedTestCase(test) {
+  const formattedTest = {
+    $: {
+      classname: test.describeLabel,
+      name: test.description,
+      time: test.time
     }
   }
-  ['passed', 'errorMsg', 'message'].forEach(k => delete testcase[k]);
-  return testcase;
-}
 
-function formattedSuite(suite) {
-  return (
-    {
-      name: suite.name,
-      timestamp: suite.timestamp,
-      tests: suite.testcases.length,
-      failures: suite.testcases.filter(testcase => testcase.errorMsg).length,
-      errors: 0,
-      testCase: suite.testcases.map(testcase => formattedCase(testcase))
+  if (test.errorMessage) {
+    formattedTest.failure = {
+      $: { message: test.message },
+      _: test.errorMessage
     }
-  )
+  }
+
+  return formattedTest;
 }
 
 // Takes a result object and tranforms into XML according to the JUnit reporting
@@ -30,12 +25,23 @@ function formattedSuite(suite) {
 function constructXML(results) {
   const filename = 'cavy_results.xml';
   console.log(`Writing results to ${filename}`);
-  let formattedResults = {
-    "testsuites": {
-      "testsuite": results.map(suite => formattedSuite(suite))
+
+  const builder = new xml2js.Builder();
+  const formattedResults = {
+    testsuite: {
+      $: {
+        name: 'cavy',
+        tests: results.length,
+        failures: results.testCases.filter(test => test.errorMessage).length,
+        errors: 0,
+        time: results.time,
+        timestamp: results.timestamp,
+        hostname: 'hostname'
+      },
+      testCase: results.testCases.map(test => formattedTestCase(test))
     }
   }
-  const builder = new xml2js.Builder();
+
   const xml = builder.buildObject(formattedResults);
   writeFileSync(filename, xml);
 }
