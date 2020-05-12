@@ -9,7 +9,7 @@
 **cavy-cli** is a command line interface for [Cavy](https://github.com/pixielabs/cavy),
 a cross-platform integration test framework for React Native, by [Pixie Labs](https://pixielabs.io).
 
-## Getting started
+## 👶 Getting started
 
 Get set up with Cavy and cavy-cli by following our
 [installation guide](https://cavy.app/docs/getting-started/installing).
@@ -21,19 +21,12 @@ We use cavy-cli to test Cavy itself! Check out [our sample app Circle CI
 configuration](https://github.com/pixielabs/cavy/blob/master/.circleci/config.yml)
 for inspiration.
 
+## 🗺️ Development roadmap
+Take a look at our public [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2447582)
+to see what we're currently working on, and what features we plan to add to
+Cavy and cavy-cli next.
 
-## TODOs
-
-- Output to a report file so continuous integration tools can give a richer
-  report of what tests passed/failed.
-- Output the test results in progress, not just when they are all finished.
-- Handle when Cavy never runs; time out if the app doesn't boot after a certain
-  amount of time.
-- Get a working example of an Android build in CI. We couldn't get an Android
-  emulator running properly in Circle CI. If you have an example of
-  **cavy-cli** working in CI for Android builds, please get in touch!
-
-## Contributing
+## 💯 Contributing
 
 Before contributing, please read the [code of conduct](CODE_OF_CONDUCT.md).
 
