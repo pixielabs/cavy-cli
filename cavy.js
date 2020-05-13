@@ -68,7 +68,7 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
-  .option('--xml', 'Write out test results to an XML file')
+  .option('--xml', 'Write out test results to cavy_results.xml')
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
