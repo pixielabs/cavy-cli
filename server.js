@@ -36,7 +36,7 @@ server.post('/report', (req, res) => {
   const endMsg = `${countString(results.length, 'example')}, ${countString(errorCount, 'failure')}`;
 
   // If requested, construct XML report.
-  if (req.app.locals.xml) {
+  if (req.app.locals.outputAsXml) {
     constructXML(fullResults);
   }
 

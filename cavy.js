@@ -29,9 +29,9 @@ function test(cmd) {
   const commandName = cmd.name();
   const entryFile = cmd.file;
   const skipbuild = cmd.skipbuild;
-  const xml = cmd.xml;
+  const outputAsXml = cmd.xml;
   const dev = cmd.dev;
-  runTests(commandName, entryFile, skipbuild, dev, xml, args);
+  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, args);
 }
 
 // Stop quitting unless we want to
