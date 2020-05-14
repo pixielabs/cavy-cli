@@ -32,6 +32,6 @@
   "dependencies": {
     "chalk": "^2.3.0",
     "commander": "^2.12.2",
-    "express": "^4.16.2"
+    "ws": "^7.3.0"
   }
 }

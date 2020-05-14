@@ -1,8 +1,26 @@
-const express = require('express');
-const server = express();
+const http = require('http');
+const WebSocket = require('ws');
 const chalk = require('chalk');
 
-server.use(express.json());
+// Initialize a server
+const server = http.createServer();
+
+// Setup local variables for server
+server.locals = { appBooted: false};
+
+// Initialize a WebSocket Server instance
+const wss = new WebSocket.Server({server});
+
+// Setup the wanted behaviour for specific socket events
+wss.on('connection', socket => {
+  socket.on('message', message => {
+    const resultsJSON = JSON.parse(message);
+    processReport(resultsJSON);
+  });
+
+  // Now we have made a connection with Cavy, we know the app has booted.
+  server.locals.appBooted = true;
+})
 
 // Internal: Takes a count and string, returns formatted and pluralized string.
 // e.g. countString(5, 'failure') => '5 failures'
@@ -13,13 +31,13 @@ function countString(count, str) {
   return `${count} ${string}`;
 };
 
-// Public: POST route which accepts json report object, console logs the results
+// Internal: Accepts a json report object, console logs the results
 // and quits the process with either exit code 1 or 0 depending on whether any
 // tests failed.
-server.post('/report', (req, res) => {
-  const results = req.body['results'];
-  const errorCount = req.body['errorCount'];
-  const duration = req.body['duration'];
+function processReport(resultsJSON) {
+  const results = resultsJSON['results'];
+  const errorCount = resultsJSON['errorCount'];
+  const duration = resultsJSON['duration'];
 
   results.forEach((result, index) => {
     message = `${index + 1}) ${result['message']}`;
@@ -39,24 +57,16 @@ server.post('/report', (req, res) => {
   // If all tests pass, exit with code 0, else code 1
   if (!errorCount) {
     console.log(chalk.green(endMsg));
-    res.send('ok');
-    if (!req.app.locals.dev) {
+    if (!server.locals.dev) {
       process.exit(0);
     }
   } else {
     console.log(chalk.red(endMsg));
-    res.send('failed');
-    if (!req.app.locals.dev) {
+    if (!server.locals.dev) {
       process.exit(1);
     }
   }
   console.log('--------------------');
-});
-
-// Public: GET route that can be used to check whether the server is listening
-// without have to hit /report.
-server.get('/', (req, res) => {
-  res.send('cavy-cli running');
-});
+};
 
 module.exports = server;

@@ -50,13 +50,20 @@ function getAdbPath() {
 }
 
 // Start test server, listening for test results to be posted.
-function runServer(command, dev) {
+function runServer(command, dev, timeout) {
   server.locals.dev = dev;
-  const app = server.listen(8082, () => {
+  server.listen(8082, () => {
     if (command == 'run-android') {
       runAdbReverse();
     }
     console.log(`cavy: Listening on port 8082 for test results...`);
+    setTimeout(() => {
+      if (!server.locals.appBooted) {
+        console.log("No response from Cavy.");
+        console.log("Terminating processes.");
+        process.exit(1);
+      }
+    }, timeout);
   });
 }
 
@@ -66,7 +73,7 @@ function runServer(command, dev) {
 // skipbuild: whether to skip the React Native build/run step
 // dev: whether to keep the server alive after tests finish
 // args: any extra arguments the user would usually to pass to `react native run...`
-function runTests(command, file, skipbuild, dev, args) {
+function runTests(command, file, skipbuild, dev, timeout, args) {
 
   // Assume entry file is 'index.js' if user doesn't supply one.
   const entryFile = file || 'index.js';
@@ -106,8 +113,11 @@ function runTests(command, file, skipbuild, dev, args) {
     process.exit(1);
   });
 
+  // Convert timeout to milliseconds, default to 20 seconds
+  const cliTimeout = (timeout * 1000) || 20000
+
   if (skipbuild) {
-    runServer(command, dev);
+    runServer(command, dev, cliTimeout);
   } else {
     // Build the app, start the test server and wait for results.
     console.log(`cavy: Running \`react-native ${command}\`...`);
@@ -124,7 +134,7 @@ function runTests(command, file, skipbuild, dev, args) {
       if (code) {
         return process.exit(code);
       }
-      runServer(command, dev);
+      runServer(command, dev, cliTimeout);
     });
   }
 }
