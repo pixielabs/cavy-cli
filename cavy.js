@@ -31,12 +31,8 @@ function test(cmd) {
   const skipbuild = cmd.skipbuild;
   const outputAsXml = cmd.xml;
   const dev = cmd.dev;
-<<<<<<< HEAD
   const timeout = cmd.timeout;
-  runTests(commandName, entryFile, skipbuild, dev, timeout, args);
-=======
-  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, args);
->>>>>>> master
+  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, timeout, args);
 }
 
 // Stop quitting unless we want to
@@ -60,11 +56,8 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
-<<<<<<< HEAD
   .option('-t, --timeout <seconds>', 'Set timeout for Cavy cli in seconds (defaults to 20 seconds)')
-=======
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
->>>>>>> master
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
@@ -77,11 +70,8 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
-<<<<<<< HEAD
   .option('-t, --timeout <seconds>', 'Set timeout for Cavy cli in seconds (defaults to 20 seconds)')
-=======
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
->>>>>>> master
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
