@@ -1,3 +1,8 @@
+# 1.5.0
+
+- New `--xml` option, which writes out JUnit compatible test results to
+  cavy_results.xml.
+
 # 1.4.1
 
 - Help text tweaks for options.

@@ -1,6 +1,7 @@
 const http = require('http');
 const WebSocket = require('ws');
 const chalk = require('chalk');
+const constructXML = require('./src/junitFormatter');
 
 // Initialize a server
 const server = http.createServer();
@@ -29,15 +30,13 @@ wss.on('connection', socket => {
 function countString(count, str) {
   let string = (count == 1) ? str : str + 's';
   return `${count} ${string}`;
-};
+}
 
 // Internal: Accepts a json report object, console logs the results
 // and quits the process with either exit code 1 or 0 depending on whether any
 // tests failed.
 function processReport(resultsJSON) {
-  const results = resultsJSON['results'];
-  const errorCount = resultsJSON['errorCount'];
-  const duration = resultsJSON['duration'];
+  const { results, fullResults, errorCount, duration } = resultsJSON;
 
   results.forEach((result, index) => {
     message = `${index + 1}) ${result['message']}`;
@@ -53,6 +52,11 @@ function processReport(resultsJSON) {
 
   console.log(`Finished in ${duration} seconds`);
   const endMsg = `${countString(results.length, 'example')}, ${countString(errorCount, 'failure')}`;
+
+  // If requested, construct XML report.
+  if (server.locals.outputAsXml) {
+    constructXML(fullResults);
+  }
 
   // If all tests pass, exit with code 0, else code 1
   if (!errorCount) {
