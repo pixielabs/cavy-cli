@@ -31,8 +31,8 @@ function test(cmd) {
   const skipbuild = cmd.skipbuild;
   const outputAsXml = cmd.xml;
   const dev = cmd.dev;
-  const timeout = cmd.timeout;
-  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, timeout, args);
+  const bootTimeout = cmd.bootTimeout;
+  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, bootTimeout, args);
 }
 
 // Stop quitting unless we want to
@@ -56,7 +56,10 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
-  .option('-t, --timeout <seconds>', 'Set timeout for Cavy cli in seconds (defaults to 20 seconds)')
+  .option(
+    '-bt, --boot-timeout <seconds>',
+    'Set how long the CLI should wait for the RN app to boot (defaults to 20 seconds)'
+  )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));
@@ -70,7 +73,10 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
-  .option('-t, --timeout <seconds>', 'Set timeout for Cavy cli in seconds (defaults to 20 seconds)')
+  .option(
+    '-bt, --boot-timeout <seconds>',
+    'Set how long the CLI should wait for the RN app to boot (defaults to 20 seconds)'
+  )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));

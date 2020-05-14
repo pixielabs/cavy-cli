@@ -50,7 +50,7 @@ function getAdbPath() {
 }
 
 // Start test server, listening for test results to be posted.
-function runServer(command, dev, outputAsXml, timeout) {
+function runServer(command, dev, outputAsXml, bootTimeout) {
   server.locals.dev = dev;
   server.locals.outputAsXml = outputAsXml;
   server.listen(8082, () => {
@@ -64,7 +64,7 @@ function runServer(command, dev, outputAsXml, timeout) {
         console.log("Terminating processes.");
         process.exit(1);
       }
-    }, timeout);
+    }, bootTimeout);
   });
 }
 
@@ -74,8 +74,9 @@ function runServer(command, dev, outputAsXml, timeout) {
 // skipbuild: whether to skip the React Native build/run step
 // dev: whether to keep the server alive after tests finish
 // outputAsXml: whether to write and save the results to XML file
+// bootTimeout: how long the CLI should wait for the RN app to boot.
 // args: any extra arguments the user would usually to pass to `react native run...`
-function runTests(command, file, skipbuild, dev, outputAsXml, timeout, args) {
+function runTests(command, file, skipbuild, dev, outputAsXml, bootTimeout, args) {
 
   // Assume entry file is 'index.js' if user doesn't supply one.
   const entryFile = file || 'index.js';
@@ -115,11 +116,11 @@ function runTests(command, file, skipbuild, dev, outputAsXml, timeout, args) {
     process.exit(1);
   });
 
-  // Convert timeout to milliseconds, default to 20 seconds
-  const cliTimeout = (timeout * 1000) || 20000
+  // Convert bootTimeout to milliseconds, default to 20 seconds
+  const timeout = (bootTimeout * 1000) || 20000
 
   if (skipbuild) {
-    runServer(command, dev, outputAsXml, cliTimeout);
+    runServer(command, dev, outputAsXml, timeout);
   } else {
     // Build the app, start the test server and wait for results.
     console.log(`cavy: Running \`react-native ${command}\`...`);
@@ -136,7 +137,7 @@ function runTests(command, file, skipbuild, dev, outputAsXml, timeout, args) {
       if (code) {
         return process.exit(code);
       }
-      runServer(command, dev, outputAsXml, cliTimeout);
+      runServer(command, dev, outputAsXml, timeout);
     });
   }
 }
