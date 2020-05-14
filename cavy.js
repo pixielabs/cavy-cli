@@ -29,8 +29,9 @@ function test(cmd) {
   const commandName = cmd.name();
   const entryFile = cmd.file;
   const skipbuild = cmd.skipbuild;
+  const outputAsXml = cmd.xml;
   const dev = cmd.dev;
-  runTests(commandName, entryFile, skipbuild, dev, args);
+  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, args);
 }
 
 // Stop quitting unless we want to
@@ -54,6 +55,7 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
+  .option('--xml', 'Write out test results to cavy_results.xml')
   .allowUnknownOption()
   .action(cmd => test(cmd));
 
@@ -66,6 +68,7 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
+  .option('--xml', 'Write out test results to cavy_results.xml')
   .allowUnknownOption()
   .action(cmd => test(cmd));
 

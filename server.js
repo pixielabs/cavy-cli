@@ -1,6 +1,7 @@
 const express = require('express');
 const server = express();
 const chalk = require('chalk');
+const constructXML = require('./src/junitFormatter');
 
 server.use(express.json());
 
@@ -11,15 +12,13 @@ server.use(express.json());
 function countString(count, str) {
   let string = (count == 1) ? str : str + 's';
   return `${count} ${string}`;
-};
+}
 
 // Public: POST route which accepts json report object, console logs the results
 // and quits the process with either exit code 1 or 0 depending on whether any
 // tests failed.
 server.post('/report', (req, res) => {
-  const results = req.body['results'];
-  const errorCount = req.body['errorCount'];
-  const duration = req.body['duration'];
+  const { results, fullResults, errorCount, duration } = req.body;
 
   results.forEach((result, index) => {
     message = `${index + 1}) ${result['message']}`;
@@ -35,6 +34,11 @@ server.post('/report', (req, res) => {
 
   console.log(`Finished in ${duration} seconds`);
   const endMsg = `${countString(results.length, 'example')}, ${countString(errorCount, 'failure')}`;
+
+  // If requested, construct XML report.
+  if (req.app.locals.outputAsXml) {
+    constructXML(fullResults);
+  }
 
   // If all tests pass, exit with code 0, else code 1
   if (!errorCount) {
@@ -55,7 +59,7 @@ server.post('/report', (req, res) => {
 
 // Public: GET route that can be used to check whether the server is listening
 // without have to hit /report.
-server.get('/', (req, res) => {
+server.get('/', (_, res) => {
   res.send('cavy-cli running');
 });
 

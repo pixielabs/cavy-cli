@@ -50,9 +50,10 @@ function getAdbPath() {
 }
 
 // Start test server, listening for test results to be posted.
-function runServer(command, dev) {
+function runServer(command, dev, outputAsXml) {
   server.locals.dev = dev;
-  const app = server.listen(8082, () => {
+  server.locals.outputAsXml = outputAsXml;
+  server.listen(8082, () => {
     if (command == 'run-android') {
       runAdbReverse();
     }
@@ -65,8 +66,9 @@ function runServer(command, dev) {
 // file: the file to boot the app from, supplied as a command option
 // skipbuild: whether to skip the React Native build/run step
 // dev: whether to keep the server alive after tests finish
+// outputAsXml: whether to write and save the results to XML file
 // args: any extra arguments the user would usually to pass to `react native run...`
-function runTests(command, file, skipbuild, dev, args) {
+function runTests(command, file, skipbuild, dev, outputAsXml, args) {
 
   // Assume entry file is 'index.js' if user doesn't supply one.
   const entryFile = file || 'index.js';
@@ -107,7 +109,7 @@ function runTests(command, file, skipbuild, dev, args) {
   });
 
   if (skipbuild) {
-    runServer(command, dev);
+    runServer(command, dev, outputAsXml);
   } else {
     // Build the app, start the test server and wait for results.
     console.log(`cavy: Running \`react-native ${command}\`...`);
@@ -124,7 +126,7 @@ function runTests(command, file, skipbuild, dev, args) {
       if (code) {
         return process.exit(code);
       }
-      runServer(command, dev);
+      runServer(command, dev, outputAsXml);
     });
   }
 }
