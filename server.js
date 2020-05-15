@@ -65,6 +65,9 @@ function logTestResult(testResultJson) {
 function shutDownServer(reportJson) {
   const { results, fullResults, errorCount, duration } = reportJson;
 
+  // Set the testCount to zero at the end of the test suite.
+  server.locals.testCount = 0;
+
   console.log(`Finished in ${duration} seconds`);
   const endMsg = `${countString(results.length, 'example')}, ${countString(errorCount, 'failure')}`;
 
