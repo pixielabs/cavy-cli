@@ -7,7 +7,10 @@ const constructXML = require('./src/junitFormatter');
 const server = http.createServer();
 
 // Setup local variables for server
-server.locals = { appBooted: false};
+server.locals = {
+  appBooted: false,
+  testCount: 0
+};
 
 // Initialize a WebSocket Server instance
 const wss = new WebSocket.Server({server});
@@ -15,8 +18,16 @@ const wss = new WebSocket.Server({server});
 // Setup the wanted behaviour for specific socket events
 wss.on('connection', socket => {
   socket.on('message', message => {
-    const resultsJSON = JSON.parse(message);
-    processReport(resultsJSON);
+    const json = JSON.parse(message);
+
+    switch(json.route) {
+      case 'singleResult':
+        logTestResult(json.data);
+        break;
+      case 'testingComplete':
+        shutDownServer(json.data);
+        break;
+    }
   });
 
   // Now we have made a connection with Cavy, we know the app has booted.
@@ -32,23 +43,27 @@ function countString(count, str) {
   return `${count} ${string}`;
 }
 
-// Internal: Accepts a json report object, console logs the results
-// and quits the process with either exit code 1 or 0 depending on whether any
-// tests failed.
-function processReport(resultsJSON) {
-  const { results, fullResults, errorCount, duration } = resultsJSON;
+// Internal: Accepts a test result json object and console.logs the result.
+function logTestResult(testResultJson) {
+  const { message, passed } = testResultJson;
 
-  results.forEach((result, index) => {
-    message = `${index + 1}) ${result['message']}`;
+  server.locals.testCount++ ;
+  formattedMessage = `${server.locals.testCount}) ${message}`;
 
-    if (result['passed']) {
-      // Log green test result if test passed
-      console.log(chalk.green(message));
-    } else {
-      // Log red test result if test failed
-      console.log(chalk.red(message));
-    }
-  })
+  if (passed) {
+    // Log green test result if test passed
+    console.log(chalk.green(formattedMessage));
+  } else {
+    // Log red test result if test failed
+    console.log(chalk.red(formattedMessage));
+  }
+};
+
+// Internal: Accepts a json report object, console.logs the overall result of
+// the test suite and quits the process with either exit code 1 or 0 depending
+// on whether any tests failed.
+function shutDownServer(reportJson) {
+  const { results, fullResults, errorCount, duration } = reportJson;
 
   console.log(`Finished in ${duration} seconds`);
   const endMsg = `${countString(results.length, 'example')}, ${countString(errorCount, 'failure')}`;
