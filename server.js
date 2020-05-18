@@ -12,11 +12,14 @@ server.locals = { appBooted: false};
 // Initialize a WebSocket Server instance
 const wss = new WebSocket.Server({server});
 
-// Setup the wanted behaviour for specific socket events
+// When the web socket server receives a connection request, we configure
+// the desired behaviour for the socket.
 wss.on('connection', socket => {
+  // If we receive a 'message' event from the Cavy-side socket,
+  // we want to pass the message into processReport().
   socket.on('message', message => {
-    const resultsJSON = JSON.parse(message);
-    processReport(resultsJSON);
+    const resultsJson = JSON.parse(message);
+    processReport(resultsJson);
   });
 
   // Now we have made a connection with Cavy, we know the app has booted.
@@ -35,8 +38,8 @@ function countString(count, str) {
 // Internal: Accepts a json report object, console logs the results
 // and quits the process with either exit code 1 or 0 depending on whether any
 // tests failed.
-function processReport(resultsJSON) {
-  const { results, fullResults, errorCount, duration } = resultsJSON;
+function processReport(resultsJson) {
+  const { results, fullResults, errorCount, duration } = resultsJson;
 
   results.forEach((result, index) => {
     message = `${index + 1}) ${result['message']}`;

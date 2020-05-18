@@ -57,8 +57,9 @@ program
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
   .option(
-    '-bt, --boot-timeout <seconds>',
+    '--boot-timeout <seconds>',
     'Set how long the CLI should wait for the RN app to boot (defaults to 20 seconds)'
+    + ''
   )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
@@ -74,7 +75,7 @@ program
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
   .option(
-    '-bt, --boot-timeout <seconds>',
+    '--boot-timeout <seconds>',
     'Set how long the CLI should wait for the RN app to boot (defaults to 20 seconds)'
   )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')

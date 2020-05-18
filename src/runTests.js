@@ -5,6 +5,9 @@ const server = require('../server');
 const { existsSync } = require('fs');
 const { spawn, execFileSync, execSync } = require('child_process');
 
+// Twenty seconds in milliseconds
+const TWENTY_SECONDS = 20000
+
 let switched = false;
 
 // Swap the user's test file into index.js to build the test app, and save a
@@ -60,8 +63,10 @@ function runServer(command, dev, outputAsXml, bootTimeout) {
     console.log(`cavy: Listening on port 8082 for test results...`);
     setTimeout(() => {
       if (!server.locals.appBooted) {
-        console.log("No response from Cavy.");
-        console.log("Terminating processes.");
+        // Convert bootTimeout from milliseconds to seconds.
+        const timeoutInSecs = bootTimeout/1000;
+        console.log(`No response from Cavy within ${timeoutInSecs} seconds.`);
+        console.log('Terminating processes.');
         process.exit(1);
       }
     }, bootTimeout);
@@ -117,7 +122,7 @@ function runTests(command, file, skipbuild, dev, outputAsXml, bootTimeout, args)
   });
 
   // Convert bootTimeout to milliseconds, default to 20 seconds
-  const timeout = (bootTimeout * 1000) || 20000
+  const timeout = (bootTimeout * 1000) || TWENTY_SECONDS
 
   if (skipbuild) {
     runServer(command, dev, outputAsXml, timeout);
