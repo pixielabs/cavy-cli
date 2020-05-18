@@ -57,7 +57,7 @@ program
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
   .option(
-    '--boot-timeout <minutes>',
+    '-t, --boot-timeout <minutes>',
     'Set how long the CLI should wait for the RN app to boot '
     + '(is ignored if used with --skipbuild, defaults to 2 minutes)'
   )
@@ -75,7 +75,7 @@ program
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
   .option(
-    '--boot-timeout <minutes>',
+    '-t, --boot-timeout <minutes>',
     'Set how long the CLI should wait for the RN app to boot '
     + '(is ignored if used with --skipbuild, defaults to 2 minutes)'
   )
