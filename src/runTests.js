@@ -6,7 +6,7 @@ const { existsSync } = require('fs');
 const { spawn, execFileSync, execSync } = require('child_process');
 
 // Twenty seconds in milliseconds
-const TWENTY_SECONDS = 20000
+const TWENTY_SECONDS = 20000;
 
 let switched = false;
 
