@@ -5,8 +5,8 @@ const server = require('../server');
 const { existsSync } = require('fs');
 const { spawn, execFileSync, execSync } = require('child_process');
 
-// This is the default value for boot timeout
-const TWO_MINUTES = 2;
+// Default boot timeout in minutes
+const BOOT_TIMEOUT = 2;
 
 let switched = false;
 
@@ -58,14 +58,7 @@ function getAdbPath() {
 }
 
 // Start test server, listening for test results to be posted.
-// bootTimeout defaults to two minutes
-function runServer({
-  command,
-  dev,
-  outputAsXml,
-  skipbuild,
-  bootTimeout = TWO_MINUTES,
-}) {
+function runServer({ command, dev, outputAsXml, skipbuild, bootTimeout }) {
   server.locals.dev = dev;
   server.locals.outputAsXml = outputAsXml;
   server.listen(8082, () => {
@@ -74,16 +67,21 @@ function runServer({
     }
     console.log(`cavy: Listening on port 8082 for test results...`);
     // Do not set a timeout if the app is already built.
-    if (!skipbuild) {
-      // Convert bootTimeout to milliseconds
-      const timeout = minsToMillisecs(bootTimeout);
+    if (skipbuild) {
+      if (bootTimeout) {
+        console.log('--boot-timeout is ignored when used with --skip-build');
+      }
+    } else {
+      // bootTimeout defaults to two minutes
+      const timeout = bootTimeout || BOOT_TIMEOUT;
       setTimeout(() => {
         if (!server.locals.appBooted) {
-          console.log(`No response from Cavy within ${bootTimeout} minutes.`);
+          console.log(`No response from Cavy within ${timeout} minutes.`);
           console.log('Terminating processes.');
           process.exit(1);
         }
-      }, timeout);
+      // Convert bootTimeout to milliseconds
+      }, minsToMillisecs(timeout));
     }
   });
 }
