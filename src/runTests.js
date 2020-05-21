@@ -5,7 +5,15 @@ const server = require('../server');
 const { existsSync } = require('fs');
 const { spawn, execFileSync, execSync } = require('child_process');
 
+// Default boot timeout in minutes
+const BOOT_TIMEOUT = 2;
+
 let switched = false;
+
+// Converts minutes to milliseconds
+function minsToMillisecs(mins) {
+  return mins * 60 * 1000;
+};
 
 // Swap the user's test file into index.js to build the test app, and save a
 // temporary version of the entry file so we can put it back later.
@@ -50,7 +58,7 @@ function getAdbPath() {
 }
 
 // Start test server, listening for test results to be posted.
-function runServer(command, dev, outputAsXml, bootTimeout) {
+function runServer({ command, dev, outputAsXml, skipbuild, bootTimeout }) {
   server.locals.dev = dev;
   server.locals.outputAsXml = outputAsXml;
   server.listen(8082, () => {
@@ -58,13 +66,23 @@ function runServer(command, dev, outputAsXml, bootTimeout) {
       runAdbReverse();
     }
     console.log(`cavy: Listening on port 8082 for test results...`);
-    setTimeout(() => {
-      if (!server.locals.appBooted) {
-        console.log("No response from Cavy.");
-        console.log("Terminating processes.");
-        process.exit(1);
+    // Do not set a timeout if the app is already built.
+    if (skipbuild) {
+      if (bootTimeout) {
+        console.log('--boot-timeout is ignored when used with --skip-build');
       }
-    }, bootTimeout);
+    } else {
+      // bootTimeout defaults to two minutes
+      const timeout = bootTimeout || BOOT_TIMEOUT;
+      setTimeout(() => {
+        if (!server.locals.appBooted) {
+          console.log(`No response from Cavy within ${timeout} minutes.`);
+          console.log('Terminating processes.');
+          process.exit(1);
+        }
+      // Convert bootTimeout to milliseconds
+      }, minsToMillisecs(timeout));
+    }
   });
 }
 
@@ -116,11 +134,8 @@ function runTests(command, file, skipbuild, dev, outputAsXml, bootTimeout, args)
     process.exit(1);
   });
 
-  // Convert bootTimeout to milliseconds, default to 20 seconds
-  const timeout = (bootTimeout * 1000) || 20000
-
   if (skipbuild) {
-    runServer(command, dev, outputAsXml, timeout);
+    runServer({ command, dev, outputAsXml, skipbuild, bootTimeout });
   } else {
     // Build the app, start the test server and wait for results.
     console.log(`cavy: Running \`react-native ${command}\`...`);
@@ -137,7 +152,7 @@ function runTests(command, file, skipbuild, dev, outputAsXml, bootTimeout, args)
       if (code) {
         return process.exit(code);
       }
-      runServer(command, dev, outputAsXml, timeout);
+      runServer({ command, dev, outputAsXml, skipbuild, bootTimeout });
     });
   }
 }

@@ -15,8 +15,11 @@ server.locals = {
 // Initialize a WebSocket Server instance
 const wss = new WebSocket.Server({server});
 
-// Setup the wanted behaviour for specific socket events
+// When the web socket server receives a connection request, we configure
+// the desired behaviour for the socket.
 wss.on('connection', socket => {
+  // If we receive a 'message' event from the Cavy-side socket,
+  // we want to pass the message into processReport().
   socket.on('message', message => {
     const json = JSON.parse(message);
 
