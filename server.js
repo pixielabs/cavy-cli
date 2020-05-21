@@ -18,8 +18,8 @@ const wss = new WebSocket.Server({server});
 // When the web socket server receives a connection request, we configure
 // the desired behaviour for the socket.
 wss.on('connection', socket => {
-  // If we receive a 'message' event from the Cavy-side socket,
-  // we want to pass the message into processReport().
+  // If we receive a 'message' from the Cavy-side socket, we parse the payload
+  // and direct the processing behaviour based on the json.event
   socket.on('message', message => {
     const json = JSON.parse(message);
 
