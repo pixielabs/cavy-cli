@@ -23,7 +23,7 @@ wss.on('connection', socket => {
   socket.on('message', message => {
     const json = JSON.parse(message);
 
-    switch(json.route) {
+    switch(json.event) {
       case 'singleResult':
         logTestResult(json.data);
         break;
