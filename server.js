@@ -68,7 +68,9 @@ function logTestResult(testResultJson) {
 function shutDownServer(reportJson) {
   const { results, fullResults, errorCount, duration } = reportJson;
 
-  // Set the testCount to zero at the end of the test suite.
+  // Set the testCount to zero at the end of the test suite. This ensures
+  // the test numbering is reset in the case where `--dev` option is
+  // supplied and we don't restart the server.
   server.locals.testCount = 0;
 
   console.log(`Finished in ${duration} seconds`);
