@@ -28,7 +28,7 @@ wss.on('connection', socket => {
         logTestResult(json.data);
         break;
       case 'testingComplete':
-        shutDownServer(json.data);
+        finishTesting(json.data);
         break;
     }
   });
@@ -65,7 +65,7 @@ function logTestResult(testResultJson) {
 // Internal: Accepts a json report object, console.logs the overall result of
 // the test suite and quits the process with either exit code 1 or 0 depending
 // on whether any tests failed.
-function shutDownServer(reportJson) {
+function finishTesting(reportJson) {
   const { results, fullResults, errorCount, duration } = reportJson;
 
   // Set the testCount to zero at the end of the test suite. This ensures
