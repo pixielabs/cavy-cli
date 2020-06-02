@@ -21,7 +21,9 @@ function getCommandArgs(cmd) {
       };
     }
   });
-  return args;
+
+  // Escape spaces.
+  return args.map(a => a.replace(/ /g, '\\ '));
 }
 
 function test(cmd) {
