@@ -1,9 +1,41 @@
-const express = require('express');
-const server = express();
+const http = require('http');
+const WebSocket = require('ws');
 const chalk = require('chalk');
 const constructXML = require('./src/junitFormatter');
 
-server.use(express.json());
+// Initialize a server
+const server = http.createServer();
+
+// Setup local variables for server
+server.locals = {
+  appBooted: false,
+  testCount: 0
+};
+
+// Initialize a WebSocket Server instance
+const wss = new WebSocket.Server({server});
+
+// When the web socket server receives a connection request, we configure
+// the desired behaviour for the socket.
+wss.on('connection', socket => {
+  // If we receive a 'message' from the Cavy-side socket, we parse the payload
+  // and direct the processing behaviour based on the json.event
+  socket.on('message', message => {
+    const json = JSON.parse(message);
+
+    switch(json.event) {
+      case 'singleResult':
+        logTestResult(json.data);
+        break;
+      case 'testingComplete':
+        finishTesting(json.data);
+        break;
+    }
+  });
+
+  // Now we have made a connection with Cavy, we know the app has booted.
+  server.locals.appBooted = true;
+})
 
 // Internal: Takes a count and string, returns formatted and pluralized string.
 // e.g. countString(5, 'failure') => '5 failures'
@@ -14,53 +46,54 @@ function countString(count, str) {
   return `${count} ${string}`;
 }
 
-// Public: POST route which accepts json report object, console logs the results
-// and quits the process with either exit code 1 or 0 depending on whether any
-// tests failed.
-server.post('/report', (req, res) => {
-  const { results, fullResults, errorCount, duration } = req.body;
+// Internal: Accepts a test result json object and console.logs the result.
+function logTestResult(testResultJson) {
+  const { message, passed } = testResultJson;
 
-  results.forEach((result, index) => {
-    message = `${index + 1}) ${result['message']}`;
+  server.locals.testCount++ ;
+  formattedMessage = `${server.locals.testCount}) ${message}`;
 
-    if (result['passed']) {
-      // Log green test result if test passed
-      console.log(chalk.green(message));
-    } else {
-      // Log red test result if test failed
-      console.log(chalk.red(message));
-    }
-  })
+  if (passed) {
+    // Log green test result if test passed
+    console.log(chalk.green(formattedMessage));
+  } else {
+    // Log red test result if test failed
+    console.log(chalk.red(formattedMessage));
+  }
+};
+
+// Internal: Accepts a json report object, console.logs the overall result of
+// the test suite and quits the process with either exit code 1 or 0 depending
+// on whether any tests failed.
+function finishTesting(reportJson) {
+  const { results, fullResults, errorCount, duration } = reportJson;
+
+  // Set the testCount to zero at the end of the test suite. This ensures
+  // the test numbering is reset in the case where `--dev` option is
+  // supplied and we don't restart the server.
+  server.locals.testCount = 0;
 
   console.log(`Finished in ${duration} seconds`);
   const endMsg = `${countString(results.length, 'example')}, ${countString(errorCount, 'failure')}`;
 
   // If requested, construct XML report.
-  if (req.app.locals.outputAsXml) {
+  if (server.locals.outputAsXml) {
     constructXML(fullResults);
   }
 
   // If all tests pass, exit with code 0, else code 1
   if (!errorCount) {
     console.log(chalk.green(endMsg));
-    res.send('ok');
-    if (!req.app.locals.dev) {
+    if (!server.locals.dev) {
       process.exit(0);
     }
   } else {
     console.log(chalk.red(endMsg));
-    res.send('failed');
-    if (!req.app.locals.dev) {
+    if (!server.locals.dev) {
       process.exit(1);
     }
   }
   console.log('--------------------');
-});
-
-// Public: GET route that can be used to check whether the server is listening
-// without have to hit /report.
-server.get('/', (_, res) => {
-  res.send('cavy-cli running');
-});
+};
 
 module.exports = server;

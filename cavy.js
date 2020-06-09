@@ -33,7 +33,8 @@ function test(cmd) {
   const skipbuild = cmd.skipbuild;
   const outputAsXml = cmd.xml;
   const dev = cmd.dev;
-  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, args);
+  const bootTimeout = cmd.bootTimeout;
+  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, bootTimeout, args);
 }
 
 // Stop quitting unless we want to
@@ -57,6 +58,11 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
+  .option(
+    '-t, --boot-timeout <minutes>',
+    'Set how long the CLI should wait for the RN app to boot '
+    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+  )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));
@@ -70,6 +76,11 @@ program
     'Swap the index files and start the report server without first building the app'
   )
   .option('-d, --dev', 'Keep report server alive until manually killed')
+  .option(
+    '-t, --boot-timeout <minutes>',
+    'Set how long the CLI should wait for the RN app to boot '
+    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
+  )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));
