@@ -59,7 +59,7 @@ program
   .option(
     '-t, --boot-timeout <minutes>',
     'Set how long the CLI should wait for the RN app to boot '
-    + '(is ignored if used with --skipbuild, defaults to 2 minutes)'
+    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
@@ -77,7 +77,7 @@ program
   .option(
     '-t, --boot-timeout <minutes>',
     'Set how long the CLI should wait for the RN app to boot '
-    + '(is ignored if used with --skipbuild, defaults to 2 minutes)'
+    + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
