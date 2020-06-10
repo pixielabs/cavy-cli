@@ -1,3 +1,15 @@
+# 2.0.0
+
+**BREAKING** If you're upgrading to cavy-cli 2.0, you will need to upgrade to
+Cavy 4.0 to continue to run your tests with the following new features:
+
+- Wait for a configurable length of time to receive a websocket connection from
+  cavy and exit with an error code if no connection is made. cavy-cli won't hang
+  indefinitely if your app fails to build and tests never run. Configure the
+  timeout length with the new `--boot-timeout` option.
+
+- Print test results in real-time.
+
 # 1.5.0
 
 - New `--xml` option, which writes out JUnit compatible test results to
