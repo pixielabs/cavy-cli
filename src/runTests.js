@@ -8,6 +8,9 @@ const { spawn, execFileSync, execSync } = require('child_process');
 // Default boot timeout in minutes
 const BOOT_TIMEOUT = 2;
 
+const isWin = process.platform === "win32";
+const cmdShell = isWin?'move':'mv';
+
 let switched = false;
 
 // Converts minutes to milliseconds
@@ -20,7 +23,7 @@ function minsToMillisecs(mins) {
 function switchEntryFile(entryFile, testEntryFile) {
   console.log(`cavy: Found an ${testEntryFile} entry point. Temporarily replacing ${entryFile} to run tests.`);
 
-  const cmd = `mv ${entryFile} index.notest.js && mv ${testEntryFile} ${entryFile}`;
+  const cmd = `${cmdShell} ${entryFile} index.notest.js && ${cmdShell} ${testEntryFile} ${entryFile}`;
   console.log(`cavy: Running \`${cmd}\`...`);
   execSync(cmd);
 
@@ -31,7 +34,7 @@ function switchEntryFile(entryFile, testEntryFile) {
 // If file changes have been made, revert them.
 function teardown(entryFile, testEntryFile) {
   console.log(`cavy: Putting your ${entryFile} back.`);
-  const cmd = `mv ${entryFile} ${testEntryFile} && mv index.notest.js ${entryFile}`;
+  const cmd = `${cmdShell} ${entryFile} ${testEntryFile} && ${cmdShell} index.notest.js ${entryFile}`;
   console.log(`cavy: Running \`${cmd}\`...`);
   execSync(cmd);
 }
