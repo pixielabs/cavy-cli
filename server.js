@@ -81,7 +81,9 @@ function finishTesting(reportJson) {
     constructXML(fullResults);
   }
 
-  // If all tests pass, exit with code 0, else code 1
+  // If all tests pass, exit with code 0, else code 42.
+  // Code 42 chosen at random so that a test failure can be distinuguished from
+  // a build failure (in which case the React Native CLI would exit with code 1).
   if (!errorCount) {
     console.log(chalk.green(endMsg));
     if (!server.locals.dev) {
@@ -90,7 +92,7 @@ function finishTesting(reportJson) {
   } else {
     console.log(chalk.red(endMsg));
     if (!server.locals.dev) {
-      process.exit(1);
+      process.exit(42);
     }
   }
   console.log('--------------------');
