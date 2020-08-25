@@ -1,3 +1,9 @@
+# 2.1.0
+
+- Change Cavy's exit code when a test fails from 1 to 42. As 1, it was difficult
+  to distinguish between a test failure and a build failure (which would also
+  exit with code 1).
+
 # 2.0.0
 
 **BREAKING** If you're upgrading to cavy-cli 2.0, you will need to upgrade to
