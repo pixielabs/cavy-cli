@@ -2,7 +2,7 @@
 // `cavy run-ios` or `cavy run-android`
 //
 const server = require('../server');
-const { existsSync } = require('fs');
+const { existsSync, renameSync } = require('fs');
 const { spawn, execFileSync, execSync } = require('child_process');
 
 // Default boot timeout in minutes
@@ -20,9 +20,8 @@ function minsToMillisecs(mins) {
 function switchEntryFile(entryFile, testEntryFile) {
   console.log(`cavy: Found an ${testEntryFile} entry point. Temporarily replacing ${entryFile} to run tests.`);
 
-  const cmd = `mv ${entryFile} index.notest.js && mv ${testEntryFile} ${entryFile}`;
-  console.log(`cavy: Running \`${cmd}\`...`);
-  execSync(cmd);
+  renameSync(entryFile, 'index.notest.js');
+  renameSync(testEntryFile, entryFile);
 
   // Save that we did this, so we can undo it later.
   switched = true;
@@ -31,9 +30,9 @@ function switchEntryFile(entryFile, testEntryFile) {
 // If file changes have been made, revert them.
 function teardown(entryFile, testEntryFile) {
   console.log(`cavy: Putting your ${entryFile} back.`);
-  const cmd = `mv ${entryFile} ${testEntryFile} && mv index.notest.js ${entryFile}`;
-  console.log(`cavy: Running \`${cmd}\`...`);
-  execSync(cmd);
+
+  renameSync(entryFile, testEntryFile);
+  renameSync('index.notest.js', entryFile);
 }
 
 function runAdbReverse() {
