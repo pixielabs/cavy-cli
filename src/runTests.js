@@ -3,7 +3,7 @@
 //
 const server = require('../server');
 const { existsSync, renameSync } = require('fs');
-const { spawn, execFileSync, execSync } = require('child_process');
+const { spawn, execFileSync } = require('child_process');
 
 // Default boot timeout in minutes
 const BOOT_TIMEOUT = 2;
