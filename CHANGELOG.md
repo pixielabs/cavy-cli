@@ -1,3 +1,11 @@
+# 2.2.0
+
+- Remove redundant details element in XML formatter - thanks
+  [TheAlmightyBob](https://github.com/TheAlmightyBob) for tidying this up.
+
+- Use Node's `renameSync` rather than `mv` to swap entry point files, fixing
+  issue on Windows.
+
 # 2.1.0
 
 - Change Cavy's exit code when a test fails from 1 to 42. As 1, it was difficult
@@ -28,15 +36,16 @@ Cavy 4.0 to continue to run your tests with the following new features:
 # 1.4.0
 
 - New options `--skipbuild` and `--dev` for running cavy tests without first
-building the app and keeping the report server alive between test runs,
-respectively. Thanks to [TheAlmightyBob](https://github.com/TheAlmightyBob) for
-these new features!
+  building the app and keeping the report server alive between test runs,
+  respectively. Thanks to [TheAlmightyBob](https://github.com/TheAlmightyBob)
+  for these new features!
 
 # 1.3.3
 
 - Fix bug whereby a test entry file was always renamed to `index.js` rather than
-the custom entry file specified with `--file` option. Thanks [TheAlmightyBob](https://github.com/TheAlmightyBob)
-for spotting and fixing this!
+  the custom entry file specified with `--file` option. Thanks
+  [TheAlmightyBob](https://github.com/TheAlmightyBob) for spotting and fixing
+  this!
 
 # 1.3.2
 

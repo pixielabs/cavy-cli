@@ -10,7 +10,7 @@ function formattedTestError(test) {
       message: test.errorMessage,
       // At the moment, Cavy doesn't have different failure types.
       type: 'cavy test failure'
-    },
+    }
   }
 }
 
