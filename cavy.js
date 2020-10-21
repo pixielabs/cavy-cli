@@ -40,7 +40,7 @@ function test(cmd) {
 // Stop quitting unless we want to
 process.stdin.resume();
 
-program.version('1.1.0');
+program.version('2.2.0');
 
 program
   .command('init [specFolderName]')
