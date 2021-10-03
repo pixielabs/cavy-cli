@@ -137,9 +137,9 @@ function runTests(command, file, skipbuild, dev, outputAsXml, bootTimeout, args)
     runServer({ command, dev, outputAsXml, skipbuild, bootTimeout });
   } else {
     // Build the app, start the test server and wait for results.
-    console.log(`cavy: Running \`react-native ${command}\`...`);
+    console.log(`cavy: Running \`npx react-native ${command}\`...`);
 
-    let rn = spawn('react-native', [command, ...args], {
+    let rn = spawn('npx', ['react-native', command, ...args], {
       stdio: 'inherit',
       shell: true
     });
