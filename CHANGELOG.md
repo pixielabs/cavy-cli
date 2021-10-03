@@ -1,3 +1,8 @@
+# 3.0.0
+
+- Swap to `npx react-native` instead of just `react-native`, which is no
+  longer recommended.
+
 # 2.2.0
 
 - Remove redundant details element in XML formatter - thanks
