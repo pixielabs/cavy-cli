@@ -9,7 +9,8 @@ const server = http.createServer();
 // Setup local variables for server
 server.locals = {
   appBooted: false,
-  testCount: 0
+  testCount: 0,
+  testFinished: false
 };
 
 // Initialize a WebSocket Server instance
@@ -27,9 +28,14 @@ wss.on('connection', socket => {
       case 'singleResult':
         logTestResult(json.data);
         break;
-      case 'testingComplete':
+      case 'testingComplete':{
+        server.locals.testFinished = true;  
         finishTesting(json.data);
         break;
+      }        
+      default: {
+        console.log(json.event);
+      }
     }
   });
 
