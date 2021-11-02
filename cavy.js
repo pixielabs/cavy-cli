@@ -34,7 +34,8 @@ function test(cmd) {
   const outputAsXml = cmd.xml;
   const dev = cmd.dev;
   const bootTimeout = cmd.bootTimeout;
-  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, bootTimeout, args);
+  const allTestRunTimeout = cmd.allTestRunTimeout;
+  runTests(commandName, entryFile, skipbuild, dev, outputAsXml, bootTimeout, allTestRunTimeout, args);
 }
 
 // Stop quitting unless we want to
@@ -63,6 +64,11 @@ program
     'Set how long the CLI should wait for the RN app to boot '
     + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
+  .option(
+    '-t, --allTestRunTimeout <minutes>',
+    'Set how long the CLI should wait for the RN app for finishing tests '
+    + '(defaults to 2 minutes, requires Cavy 4.0.0)'
+  )
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));
@@ -81,6 +87,12 @@ program
     'Set how long the CLI should wait for the RN app to boot '
     + '(is ignored if used with --skipbuild, defaults to 2 minutes, requires Cavy 4.0.0)'
   )
+  .option(
+    '-t, --allTestRunTimeout <minutes>',
+    'Set how long the CLI should wait for the RN app for finishing tests '
+    + '(defaults to 2 minutes, requires Cavy 4.0.0)'
+  )
+  
   .option('--xml', 'Write out test results to cavy_results.xml (requires Cavy 3.3.0)')
   .allowUnknownOption()
   .action(cmd => test(cmd));

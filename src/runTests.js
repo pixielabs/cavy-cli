@@ -7,6 +7,7 @@ const { spawn, execFileSync } = require('child_process');
 
 // Default boot timeout in minutes
 const BOOT_TIMEOUT = 2;
+const ALL_TESTS_RUN_TIMEOUT = 2;
 
 let switched = false;
 
@@ -57,7 +58,7 @@ function getAdbPath() {
 }
 
 // Start test server, listening for test results to be posted.
-function runServer({ command, dev, outputAsXml, skipbuild, bootTimeout }) {
+function runServer({ command, dev, outputAsXml, skipbuild, bootTimeout, allTestRunTimeout }) {
   server.locals.dev = dev;
   server.locals.outputAsXml = outputAsXml;
   server.listen(8082, () => {
@@ -73,6 +74,7 @@ function runServer({ command, dev, outputAsXml, skipbuild, bootTimeout }) {
     } else {
       // bootTimeout defaults to two minutes
       const timeout = bootTimeout || BOOT_TIMEOUT;
+      const testsTimeout = allTestRunTimeout || ALL_TESTS_RUN_TIMEOUT      
       setTimeout(() => {
         if (!server.locals.appBooted) {
           console.log(`No response from Cavy within ${timeout} minutes.`);
@@ -81,6 +83,16 @@ function runServer({ command, dev, outputAsXml, skipbuild, bootTimeout }) {
         }
       // Convert bootTimeout to milliseconds
       }, minsToMillisecs(timeout));
+      setTimeout(() => {
+        if (!server.locals.testFinished) {
+          console.log(`No response from Cavy within ${allTestRunTimeout} minutes.`);
+          console.log('Terminating processes.');
+          process.exit(1);
+        } else {
+          console.log("Finished")
+        }
+      // Convert testsTimeout to milliseconds
+      }, minsToMillisecs(testsTimeout));
     }
   });
 }
@@ -93,7 +105,7 @@ function runServer({ command, dev, outputAsXml, skipbuild, bootTimeout }) {
 // outputAsXml: whether to write and save the results to XML file
 // bootTimeout: how long the CLI should wait for the RN app to boot.
 // args: any extra arguments the user would usually to pass to `react native run...`
-function runTests(command, file, skipbuild, dev, outputAsXml, bootTimeout, args) {
+function runTests(command, file, skipbuild, dev, outputAsXml, bootTimeout, allTestRunTimeout, args) {
 
   // Assume entry file is 'index.js' if user doesn't supply one.
   const entryFile = file || 'index.js';
@@ -134,7 +146,7 @@ function runTests(command, file, skipbuild, dev, outputAsXml, bootTimeout, args)
   });
 
   if (skipbuild) {
-    runServer({ command, dev, outputAsXml, skipbuild, bootTimeout });
+    runServer({ command, dev, outputAsXml, skipbuild, bootTimeout, allTestRunTimeout});
   } else {
     // Build the app, start the test server and wait for results.
     console.log(`cavy: Running \`npx react-native ${command}\`...`);
@@ -151,7 +163,7 @@ function runTests(command, file, skipbuild, dev, outputAsXml, bootTimeout, args)
       if (code) {
         return process.exit(code);
       }
-      runServer({ command, dev, outputAsXml, skipbuild, bootTimeout });
+      runServer({ command, dev, outputAsXml, skipbuild, bootTimeout, allTestRunTimeout });
     });
   }
 }
